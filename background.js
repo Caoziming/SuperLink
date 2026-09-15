@@ -1,9 +1,9 @@
-// 工具栏图标右键菜单：在侧边栏打开 Link Hub
+// 工具栏图标右键菜单：在侧边栏打开 Super Link
 // 上下文菜单点击对 chrome.sidePanel.open 的用户手势要求最宽松，作为弹窗按钮的兜底入口
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: 'open-side-panel',
-    title: '在侧边栏打开 Link Hub',
+    title: '在侧边栏打开 Super Link',
     contexts: ['action']
   });
 });

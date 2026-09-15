@@ -60,7 +60,7 @@ function matchItem(item, groupName, words) {
 
 // ---------- 浏览器书签 ----------
 
-const BOOKMARKS_KEY = 'linkHubShowBookmarks';
+const BOOKMARKS_KEY = 'superLinkShowBookmarks';
 let bookmarkGroups = [];
 
 // 书签分组配色：按分组名散列取色，同名同色、每次打开不变
@@ -420,7 +420,7 @@ function backToTopQuietly() {
 
 // ---------- 主题色自定义 ----------
 
-const THEME_KEY = 'linkHubTheme';
+const THEME_KEY = 'superLinkTheme';
 const DEFAULT_THEME = '#3370ff';
 const PRESET_THEMES = [
   { name: '静谧蓝', color: '#3370ff' },
@@ -559,7 +559,7 @@ function initBookmarks() {
 
 // ---------- 标签折叠 / 帮助 ----------
 
-const TABS_COLLAPSED_KEY = 'linkHubTabsCollapsed';
+const TABS_COLLAPSED_KEY = 'superLinkTabsCollapsed';
 const tabsToggleBtn = document.getElementById('tabsToggle');
 const tabsToggleLabel = document.getElementById('tabsToggleLabel');
 
