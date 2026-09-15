@@ -1,6 +1,10 @@
 // 平台徽章
 const PLATFORM_MAP = { pc: 'PC', wechat: '微信H5' };
 
+// 分组类型图标：书签分组 = 文件夹，内置分组（data.js）= 链环
+const FOLDER_ICON = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>';
+const LINK_ICON = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
+
 // 侧边栏模式（sidepanel.html 与 popup.html 共用本脚本）
 const IS_SIDEPANEL = document.body.classList.contains('mode-sidepanel');
 // Edge 浏览器（UA 含 Edg/），用于历史页地址、openPopup 提示等浏览器差异处理
@@ -19,8 +23,8 @@ function visibleGroups() {
   return state.showBookmarks ? [...LINK_GROUPS, ...bookmarkGroups] : LINK_GROUPS;
 }
 
-// 状态：当前标签 + 搜索关键字 + 书签开关 + 标签折叠
-const state = { tab: ALL_TAB.name, keyword: '', showBookmarks: false, tabsCollapsed: false };
+// 状态：当前标签 + 搜索关键字 + 书签开关 + 分组图标开关 + 标签折叠
+const state = { tab: ALL_TAB.name, keyword: '', showBookmarks: false, tabsCollapsed: false, showGroupIcons: true };
 
 // ---------- 工具函数 ----------
 
@@ -119,15 +123,22 @@ function renderTabs() {
       ? groups.reduce((n, g) => n + g.items.length, 0)
       : groups.find(g => g.group === name).items.length;
 
-    const dot = document.createElement('span');
-    dot.className = 'tab-dot';
+    // 分组图标开启时用类型图标（文件夹/链环）代替彩点，「全部」保持彩点
+    const lead = document.createElement('span');
+    const typeIcon = state.showGroupIcons ? groupTypeIcon(name) : null;
+    if (typeIcon) {
+      lead.className = 'tab-ic';
+      lead.innerHTML = typeIcon;
+    } else {
+      lead.className = 'tab-dot';
+    }
     const label = document.createElement('span');
     label.textContent = name;
     const cnt = document.createElement('span');
     cnt.className = 'tab-count';
     cnt.textContent = count;
 
-    btn.append(dot, label, cnt);
+    btn.append(lead, label, cnt);
     btn.addEventListener('click', () => {
       state.tab = name;
       document.getElementById('searchInput').value = '';
@@ -142,6 +153,12 @@ function renderTabs() {
 
   // 标签集变化后同步折叠状态与折叠按钮可见性
   applyTabsCollapse();
+}
+
+// 按分组名取类型图标：书签分组 → 文件夹；内置分组 → 链环；未命中（如「全部」）→ null
+function groupTypeIcon(name) {
+  const g = visibleGroups().find(gr => gr.group === name);
+  return g ? (g.isBookmark ? FOLDER_ICON : LINK_ICON) : null;
 }
 
 // ---------- 渲染 ----------
@@ -183,7 +200,10 @@ function render() {
 
     const title = document.createElement('div');
     title.className = 'group-title';
-    title.innerHTML = `${escapeHtml((isBookmark ? '🔖 ' : '') + group)}<span class="group-count">${items.length}</span>`;
+    const leadIcon = state.showGroupIcons
+      ? `<span class="g-ic">${isBookmark ? FOLDER_ICON : LINK_ICON}</span>`
+      : '';
+    title.innerHTML = `${leadIcon}${escapeHtml(group)}<span class="group-count">${items.length}</span>`;
     sec.appendChild(title);
 
     items.forEach(item => sec.appendChild(renderItem(item)));
@@ -495,6 +515,7 @@ themePanel.addEventListener('click', e => e.stopPropagation());
 // 点击面板外任意位置关闭
 document.addEventListener('click', () => {
   if (!themePanel.hidden) themePanel.hidden = true;
+  if (colsPanel && !colsPanel.hidden) colsPanel.hidden = true;
 });
 
 // 自定义取色器：拖动实时预览，确认后自动保存
@@ -591,6 +612,67 @@ function initBookmarks() {
       renderTabs();
       render();
     }
+  });
+}
+
+// ---------- 分组图标开关 ----------
+
+const GROUP_ICONS_KEY = 'superLinkGroupIcons';
+const giBtn = document.getElementById('groupIconBtn');
+
+function applyGroupIconToggle() {
+  giBtn.classList.toggle('on', state.showGroupIcons);
+  giBtn.title = state.showGroupIcons ? '隐藏分组图标' : '显示分组图标';
+}
+
+giBtn.addEventListener('click', () => {
+  state.showGroupIcons = !state.showGroupIcons;
+  try { localStorage.setItem(GROUP_ICONS_KEY, state.showGroupIcons ? '1' : '0'); } catch { /* 忽略存储异常 */ }
+  applyGroupIconToggle();
+  renderTabs();
+  render();
+});
+
+function initGroupIcons() {
+  try { state.showGroupIcons = localStorage.getItem(GROUP_ICONS_KEY) !== '0'; } catch { /* 忽略存储异常 */ }
+  applyGroupIconToggle();
+}
+
+// ---------- 列表列数（仅侧边栏模式，popup.html 无此控件） ----------
+
+const COLS_KEY = 'superLinkCols';
+const colsBtn = document.getElementById('colsBtn');
+const colsPanel = document.getElementById('colsPanel');
+
+function applyCols(cols) {
+  document.body.classList.remove('cols-1', 'cols-2', 'cols-3');
+  document.body.classList.add(`cols-${cols}`);
+  document.querySelectorAll('.col-btn').forEach(b => {
+    b.classList.toggle('active', Number(b.dataset.cols) === cols);
+  });
+}
+
+function initCols() {
+  let cols = 1;
+  try { cols = Number(localStorage.getItem(COLS_KEY)) || 1; } catch { /* 忽略存储异常 */ }
+  if (![1, 2, 3].includes(cols)) cols = 1;
+  applyCols(cols);
+}
+
+if (colsBtn) {
+  colsBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    colsPanel.hidden = !colsPanel.hidden;
+  });
+
+  colsPanel.addEventListener('click', e => e.stopPropagation());
+
+  document.querySelectorAll('.col-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cols = Number(btn.dataset.cols);
+      try { localStorage.setItem(COLS_KEY, String(cols)); } catch { /* 忽略存储异常 */ }
+      applyCols(cols);
+    });
   });
 }
 
@@ -710,6 +792,8 @@ if (popupBtn) {
 initMode();
 initTheme();
 initBookmarks();
+initGroupIcons();
+initCols();
 initTabsCollapse();
 renderTabs();
 render();
