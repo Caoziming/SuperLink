@@ -1,4 +1,5 @@
 :root {
+  color-scheme: light;
   --bg: #f5f6f8;
   --card-bg: #ffffff;
   --card-hover: #fafbfd;
@@ -9,6 +10,9 @@
   --text-3: #8f959e;
   --accent: #3370ff;
   --link: #3370ff;
+  --header-bg: linear-gradient(180deg, #ffffff 0%, #f7f8fa 100%);
+  --clear-bg: #e9ebf0;
+  --clear-bg-hover: #d9dce4;
 
   --test-bg: #fff3e0;
   --test-text: #b25e09;
@@ -29,6 +33,45 @@
   --chip-bg: #f2f3f5;
   --chip-text: #41464f;
   --chip-border: #e2e4e9;
+  --chip-hover-bg: #ffffff;
+}
+
+/* 深色模式：html[data-theme="dark"]，由 popup.js 按用户设置 / 系统偏好切换 */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #17181c;
+  --card-bg: #212329;
+  --card-hover: #272a31;
+  --border: #34373f;
+  --border-hover: #454a55;
+  --text: #e8eaed;
+  --text-2: #a8adb8;
+  --text-3: #7d828c;
+  --link: #7ea3f9;
+  --header-bg: linear-gradient(180deg, #202227 0%, #191b20 100%);
+  --clear-bg: #2c2f37;
+  --clear-bg-hover: #383c45;
+
+  --test-bg: #38290f;
+  --test-text: #ffb45e;
+  --test-border: #55401c;
+
+  --prod-bg: #0f2b1c;
+  --prod-text: #52c78f;
+  --prod-border: #1d4530;
+
+  --pc-bg: #1a2740;
+  --pc-text: #8ab0f8;
+  --pc-border: #2b3d63;
+
+  --wechat-bg: #0e2b1c;
+  --wechat-text: #3ddc97;
+  --wechat-border: #1c4a32;
+
+  --chip-bg: #2a2d34;
+  --chip-text: #c9cdd4;
+  --chip-border: #3b3f47;
+  --chip-hover-bg: #33363e;
 }
 
 * {
@@ -51,7 +94,7 @@ body {
   top: 0;
   z-index: 10;
   padding: 12px 14px 10px;
-  background: linear-gradient(180deg, #ffffff 0%, #f7f8fa 100%);
+  background: var(--header-bg);
   border-bottom: 1px solid var(--border);
 }
 
@@ -77,10 +120,10 @@ body {
   border-radius: 9px;
   background: linear-gradient(135deg, #ff5f6d, #ffc371, #7ed957, #4facfe, #a18cd1);
   color: #fff;
-  font-size: 16px;
+  font-size: 9px;
   font-weight: 800;
   font-family: Arial, sans-serif;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
 }
 
 /* 标题文字：与 Logo 同款的彩虹品牌渐变 */
@@ -109,7 +152,7 @@ body {
   height: 28px;
   border: 1px solid var(--border);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--card-bg);
   color: var(--accent);
   cursor: pointer;
   transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
@@ -140,7 +183,7 @@ body {
   display: flex;
   align-items: center;
   gap: 7px;
-  background: #ffffff;
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 9px;
   padding: 6px 10px;
@@ -149,7 +192,7 @@ body {
 
 .search-box:focus-within {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(51, 112, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.12);
 }
 
 .search-icon {
@@ -179,7 +222,7 @@ body {
   height: 17px;
   border: none;
   border-radius: 50%;
-  background: #e9ebf0;
+  background: var(--clear-bg);
   color: var(--text-2);
   font-size: 12px;
   line-height: 1;
@@ -188,7 +231,7 @@ body {
 }
 
 .clear-btn:hover {
-  background: #d9dce4;
+  background: var(--clear-bg-hover);
   color: var(--text);
 }
 
@@ -220,7 +263,7 @@ body {
   gap: 4px;
   flex-shrink: 0;
   border: 1px solid var(--border);
-  background: #ffffff;
+  background: var(--card-bg);
   color: var(--text-3);
   border-radius: 99px;
   padding: 6px 11px;
@@ -250,7 +293,7 @@ body {
   align-items: center;
   gap: 5px;
   border: 1px solid var(--border);
-  background: #ffffff;
+  background: var(--card-bg);
   color: var(--text-2);
   border-radius: 99px;
   padding: 4px 11px;
@@ -520,7 +563,7 @@ body {
 }
 
 .chip:hover {
-  background: #ffffff;
+  background: var(--chip-hover-bg);
   color: var(--accent);
 }
 
@@ -608,7 +651,7 @@ body {
   right: 14px;
   z-index: 95;
   width: 264px;
-  background: #ffffff;
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 12px 14px;
@@ -657,7 +700,7 @@ body {
 }
 
 .swatch.active {
-  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px var(--swatch-color, var(--accent));
+  box-shadow: 0 0 0 2px var(--card-bg), 0 0 0 4px var(--swatch-color, var(--accent));
 }
 
 .theme-custom {
@@ -680,7 +723,7 @@ body {
   padding: 0;
   border: 1px solid var(--border);
   border-radius: 6px;
-  background: #ffffff;
+  background: var(--card-bg);
   cursor: pointer;
 }
 
@@ -708,6 +751,47 @@ body {
 .theme-reset:hover {
   color: var(--accent);
   background: rgba(var(--accent-rgb), 0.08);
+}
+
+/* ---------- 显示模式（跟随系统 / 白天 / 夜晚） ---------- */
+.theme-mode {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 10px;
+  margin-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.mode-group {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.mode-btn {
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-2);
+  font-size: 11px;
+  font-family: inherit;
+  padding: 3px 9px;
+  border-radius: 99px;
+  cursor: pointer;
+  line-height: 1.5;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.mode-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.mode-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
 }
 
 /* ---------- 侧边栏模式（sidepanel.html，流体宽度） ---------- */

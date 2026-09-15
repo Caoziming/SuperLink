@@ -6,6 +6,7 @@
   <title>Super Link · 使用帮助</title>
   <style>
     :root {
+      color-scheme: light;
       --accent: #3370ff;
       --text: #1f2329;
       --text-2: #646a73;
@@ -13,6 +14,25 @@
       --border: #e6e8ec;
       --bg: #f5f6f8;
       --card: #ffffff;
+      --tip-bg: #eef3fe;
+      --tip-border: #c4d5fa;
+      --tip-text: #3564d4;
+      --kbd-bg: #f2f3f5;
+    }
+
+    /* 深色模式：跟随 Super Link 的显示模式设置（superLinkMode） */
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --text: #e8eaed;
+      --text-2: #a8adb8;
+      --text-3: #7d828c;
+      --border: #34373f;
+      --bg: #17181c;
+      --card: #212329;
+      --tip-bg: #1a2740;
+      --tip-border: #2b3d63;
+      --tip-text: #8ab0f8;
+      --kbd-bg: #2a2d34;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -39,7 +59,7 @@
       border-radius: 13px;
       background: linear-gradient(135deg, #ff5f6d, #ffc371, #7ed957, #4facfe, #a18cd1);
       color: #fff;
-      font-size: 16px;
+      font-size: 12px;
       font-weight: 800;
       font-family: Arial, sans-serif;
     }
@@ -104,9 +124,9 @@
     .card strong { color: var(--text); }
 
     .tip {
-      background: #eef3fe;
-      border: 1px solid #c4d5fa;
-      color: #3564d4;
+      background: var(--tip-bg);
+      border: 1px solid var(--tip-border);
+      color: var(--tip-text);
       border-radius: 8px;
       padding: 6px 12px;
       font-size: 12.5px;
@@ -114,7 +134,7 @@
     }
 
     kbd {
-      background: #f2f3f5;
+      background: var(--kbd-bg);
       border: 1px solid var(--border);
       border-bottom-width: 2px;
       border-radius: 5px;
@@ -123,11 +143,25 @@
       font-family: inherit;
     }
   </style>
+  <script>
+    // 与弹窗/侧边栏共用 superLinkMode 设置；未设置或 auto 时跟随系统偏好
+    (function () {
+      var mq = window.matchMedia('(prefers-color-scheme: dark)');
+      function apply() {
+        var mode = 'auto';
+        try { mode = localStorage.getItem('superLinkMode') || 'auto'; } catch (e) { /* 忽略存储异常 */ }
+        var dark = mode === 'dark' || (mode === 'auto' && mq.matches);
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      }
+      apply();
+      mq.addEventListener('change', apply);
+    })();
+  </script>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="logo">Link</div>
+    <div class="logo">S Link</div>
     <h1>Super Link · 使用帮助</h1>
     <p class="sub">本文档说明扩展各功能怎么使用</p>
   </header>

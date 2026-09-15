@@ -462,7 +462,8 @@ function applyTheme(color, save = true) {
   root.setProperty('--accent', color);
   root.setProperty('--accent-rgb', `${r}, ${g}, ${b}`);
   root.setProperty('--link', color);
-  root.setProperty('--border-hover', mixHex(color, '#e6e8ec', 0.35));
+  // 悬浮边框色的混合基色随显示模式变化（浅色亮基 / 深色暗基）
+  root.setProperty('--border-hover', mixHex(color, isDarkMode() ? '#2e3138' : '#e6e8ec', 0.35));
 
   currentTheme = color;
   if (save) {
@@ -520,6 +521,52 @@ function initTheme() {
   let saved = DEFAULT_THEME;
   try { saved = localStorage.getItem(THEME_KEY) || DEFAULT_THEME; } catch { /* 忽略存储异常 */ }
   applyTheme(saved, false);
+}
+
+// ---------- 深浅色模式（跟随系统 / 白天 / 夜晚） ----------
+
+const MODE_KEY = 'superLinkMode';
+const DARK_MQ = window.matchMedia('(prefers-color-scheme: dark)');
+let colorMode = 'auto'; // 'auto' | 'light' | 'dark'
+
+function isDarkMode() {
+  return document.documentElement.dataset.theme === 'dark';
+}
+
+// auto 模式下解析系统偏好，light / dark 直接采用
+function resolvedMode() {
+  return colorMode === 'auto' ? (DARK_MQ.matches ? 'dark' : 'light') : colorMode;
+}
+
+function applyMode(save = true) {
+  document.documentElement.dataset.theme = resolvedMode();
+  if (save) {
+    try { localStorage.setItem(MODE_KEY, colorMode); } catch { /* 忽略存储异常 */ }
+  }
+  // 悬浮边框色依赖模式基色，切换后重新派生（不重复写存储）
+  applyTheme(currentTheme, false);
+  document.querySelectorAll('.mode-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === colorMode);
+  });
+}
+
+// 跟随系统时，系统深浅色变化实时生效
+DARK_MQ.addEventListener('change', () => {
+  if (colorMode === 'auto') applyMode(false);
+});
+
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    colorMode = btn.dataset.mode;
+    applyMode();
+  });
+});
+
+function initMode() {
+  let saved = 'auto';
+  try { saved = localStorage.getItem(MODE_KEY) || 'auto'; } catch { /* 忽略存储异常 */ }
+  colorMode = ['auto', 'light', 'dark'].includes(saved) ? saved : 'auto';
+  applyMode(false);
 }
 
 // ---------- 浏览器书签开关 ----------
@@ -670,6 +717,7 @@ if (popupBtn) {
 
 // ---------- 初始化 ----------
 
+initMode();
 initTheme();
 initBookmarks();
 initTabsCollapse();
