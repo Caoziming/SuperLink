@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Link Hub · 侧边栏</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body class="mode-sidepanel">
+  <header class="header">
+    <div class="header-top">
+      <div class="header-title">
+        <span class="logo">Link</span>
+        <h1>Link Hub</h1>
+      </div>
+      <div class="header-actions">
+        <button id="bmBtn" class="icon-btn bm-btn" title="显示浏览器书签">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg>
+        </button>
+        <button id="themeBtn" class="icon-btn" title="主题色设置">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+          </svg>
+        </button>
+        <button id="helpBtn" class="icon-btn" title="帮助说明">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </button>
+        <button id="historyBtn" class="icon-btn" title="浏览器历史记录">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+            <path d="M12 7v5l4 2"/>
+          </svg>
+        </button>
+        <button id="popupBtn" class="icon-btn sidepanel-only" title="变为弹窗打开">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 16 16" width="13" height="13">
+        <circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="10.5" y1="10.5" x2="14" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <input id="searchInput" type="text" placeholder="搜索名称 / URL / 备注 / 账号…" autocomplete="off">
+      <button id="clearBtn" class="clear-btn" title="清空" hidden>×</button>
+    </div>
+  </header>
+  <div id="themePanel" class="theme-panel" hidden>
+    <div class="theme-panel-title">主题色<span id="themeCurrent" class="theme-current">#3370ff</span></div>
+    <div id="themeSwatches" class="theme-swatches"></div>
+    <div class="theme-custom">
+      <span class="theme-custom-label">自定义</span>
+      <input type="color" id="themeColorInput" value="#3370ff" title="选择任意颜色">
+      <button id="themeReset" class="theme-reset">恢复默认</button>
+    </div>
+  </div>
+  <div class="tabs-bar">
+    <nav class="tabs" id="tabs"></nav>
+    <button id="tabsToggle" class="tabs-toggle" hidden>
+      <span id="tabsToggleLabel">展开</span>
+      <svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true">
+        <path d="M4 6 L8 10 L12 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+  <div class="result-bar" id="resultBar" hidden></div>
+  <main id="groups" class="groups"></main>
+  <button id="backTop" class="back-top" title="回到顶部">
+    <svg viewBox="0 0 16 16" width="12" height="12">
+      <path d="M8 3 L13 9 L10.5 9 L10.5 13 L5.5 13 L5.5 9 L3 9 Z" fill="currentColor"/>
+    </svg>
+    <span>置顶</span>
+  </button>
+  <script src="data.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

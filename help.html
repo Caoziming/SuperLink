@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Link Hub · 使用帮助</title>
+  <style>
+    :root {
+      --accent: #3370ff;
+      --text: #1f2329;
+      --text-2: #646a73;
+      --text-3: #8f959e;
+      --border: #e6e8ec;
+      --bg: #f5f6f8;
+      --card: #ffffff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.8;
+      padding: 36px 16px 72px;
+    }
+
+    .wrap { max-width: 760px; margin: 0 auto; }
+
+    header { text-align: center; margin-bottom: 26px; }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, #ff5f6d, #ffc371, #7ed957, #4facfe, #a18cd1);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 800;
+      font-family: Arial, sans-serif;
+    }
+
+    header h1 {
+      font-size: 22px;
+      margin-top: 12px;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, #ff5f6d, #ffc371, #7ed957, #4facfe, #a18cd1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    header .sub { color: var(--text-3); font-size: 13px; margin-top: 4px; }
+
+    .toc {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 20px;
+      margin-bottom: 22px;
+    }
+
+    .toc-title { font-size: 13px; font-weight: 600; color: var(--text-2); margin-bottom: 4px; }
+
+    .toc a { color: var(--accent); text-decoration: none; margin-right: 16px; font-size: 13px; line-height: 2; }
+    .toc a:hover { text-decoration: underline; }
+
+    section.card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 22px;
+      margin-bottom: 14px;
+    }
+
+    .card h2 {
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 8px;
+    }
+
+    .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #4facfe, #a18cd1);
+      color: #fff;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .card p { color: var(--text-2); font-size: 13.5px; }
+    .card p + p { margin-top: 5px; }
+
+    .card strong { color: var(--text); }
+
+    .tip {
+      background: #eef3fe;
+      border: 1px solid #c4d5fa;
+      color: #3564d4;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 12.5px;
+      margin-top: 10px;
+    }
+
+    kbd {
+      background: #f2f3f5;
+      border: 1px solid var(--border);
+      border-bottom-width: 2px;
+      border-radius: 5px;
+      padding: 0 6px;
+      font-size: 12px;
+      font-family: inherit;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">Link</div>
+    <h1>Link Hub · 使用帮助</h1>
+    <p class="sub">本文档说明扩展各功能怎么使用</p>
+  </header>
+
+  <nav class="toc">
+    <div class="toc-title">目录</div>
+    <a href="#tab">标签导航</a>
+    <a href="#collapse">标签折叠</a>
+    <a href="#search">搜索</a>
+    <a href="#open">打开链接</a>
+    <a href="#account">账号密码复制</a>
+    <a href="#badge">环境与平台徽章</a>
+    <a href="#bookmark">浏览器书签</a>
+    <a href="#theme">主题色</a>
+    <a href="#backtop">置顶</a>
+    <a href="#sidepanel">侧边栏模式</a>
+  </nav>
+
+  <section class="card" id="tab">
+    <h2><span class="num">1</span>标签导航</h2>
+    <p>顶部标签按项目边界划分，点击任一标签，列表只显示该标签下的链接；点击<strong>「全部」</strong>恢复展示全部链接。</p>
+    <p>标签上的数字表示该标签下的链接数量。</p>
+  </section>
+
+  <section class="card" id="collapse">
+    <h2><span class="num">2</span>标签折叠</h2>
+    <p>标签较多换行时，标签栏右侧会出现<strong>「展开 / 收起」</strong>按钮：</p>
+    <p>· <strong>折叠</strong>：标签栏只显示一行，放不下的标签暂时隐藏</p>
+    <p>· <strong>展开</strong>：标签栏显示全部行数</p>
+    <p>折叠 / 展开状态会自动记忆，下次打开扩展保持上次的状态。</p>
+    <p class="tip">标签总数只有一行时，不会显示该按钮。</p>
+  </section>
+
+  <section class="card" id="search">
+    <h2><span class="num">3</span>搜索</h2>
+    <p>在搜索框输入关键字，按<strong>名称 / URL / 备注 / 分组名 / 账号密码</strong>模糊筛选，不区分大小写。</p>
+    <p>多个关键字用空格分隔，表示「同时满足」（AND 查询）。例如输入 <kbd>git 正式</kbd>，查找名称或 URL 含「git」且属于正式环境（env 为 prod）的链接。</p>
+    <p>按 <kbd>Esc</kbd> 或点击输入框右侧的 <kbd>×</kbd> 快速清空搜索，恢复标签浏览。</p>
+  </section>
+
+  <section class="card" id="open">
+    <h2><span class="num">4</span>打开链接与复制链接</h2>
+    <p><strong>复制链接</strong>：每个条目右上角都有复制图标按钮，点击即复制该条目链接，底部弹出「✓ 复制成功」提示，不限于微信 H5 条目。</p>
+    <p><strong>普通条目</strong>（PC 后台等）：点击卡片任意位置，在新标签页打开对应系统。</p>
+    <p><strong>微信 H5 条目</strong>（卡片左侧有绿色竖条标识）：点击卡片同样只复制链接（与复制按钮效果一致），把链接粘贴到微信环境里打开即可。</p>
+  </section>
+
+  <section class="card" id="account">
+    <h2><span class="num">5</span>账号密码复制</h2>
+    <p>带账号信息的条目下方会显示账户行：</p>
+    <p>· 点击<strong>账号 chip</strong>（明文显示）→ 复制账号</p>
+    <p>· 点击<strong>密码 chip</strong>（显示为 ••••••）→ 复制密码</p>
+    <p class="tip">鼠标悬停在密码 chip 上可以直接看到明文密码；点击 chip 不会触发跳转。</p>
+  </section>
+
+  <section class="card" id="badge">
+    <h2><span class="num">6</span>环境与平台徽章</h2>
+    <p>条目名称右侧的彩色小徽章：</p>
+    <p>· <strong>橙色「测试」</strong> = 测试环境链接；<strong>绿色「正式」</strong> = 正式环境链接</p>
+    <p>· <strong>「PC」</strong> = 电脑端打开；<strong>「微信H5」</strong> = 需在微信环境打开</p>
+  </section>
+
+  <section class="card" id="bookmark">
+    <h2><span class="num">7</span>浏览器书签</h2>
+    <p>点击头部<strong> 🔖 书签开关</strong>，可以把浏览器的书签加进列表：</p>
+    <p>· 每个书签<strong>文件夹</strong>作为一个标签，追加在内置标签之后；文件夹里的<strong>书签</strong>就是该标签下的条目</p>
+    <p>· 嵌套文件夹以「父文件夹/子文件夹」路径命名（如 <kbd>工作/后台</kbd>），空文件夹自动忽略</p>
+    <p>· 书签分组标题带 🔖 图标，与内置分组区分；点击书签条目直接在新标签页打开</p>
+    <p class="tip">开关状态会自动记忆；再次点击开关即可隐藏书签分组。</p>
+  </section>
+
+  <section class="card" id="theme">
+    <h2><span class="num">8</span>主题色</h2>
+    <p>点击头部<strong>调色板按钮</strong>，在弹出面板中选择：</p>
+    <p>· 8 种预置色块任选，或用「自定义」取色器选任意颜色（拖动实时预览）</p>
+    <p>· 点「恢复默认」回到静谧蓝</p>
+    <p class="tip">主题色会应用到链接文字、标签、搜索框光晕、卡片悬停阴影等处，并自动记忆；点击面板外任意位置关闭面板。</p>
+  </section>
+
+  <section class="card" id="backtop">
+    <h2><span class="num">9</span>置顶</h2>
+    <p>列表下滑一段距离后，底部会出现彩色渐变的<strong>「置顶」</strong>按钮，点击后平滑回到列表顶部。</p>
+    <p class="tip">本帮助页由头部 <strong>❓ 按钮</strong>打开；头部 <strong>🕘 时钟按钮</strong>可在新标签页打开浏览器历史记录；链接数据的增删改在扩展目录的 data.js 中维护。</p>
+  </section>
+
+  <section class="card" id="sidepanel">
+    <h2><span class="num">10</span>侧边栏模式</h2>
+    <p>两种方式把 Link Hub 以<strong>侧边栏常驻</strong>方式打开：</p>
+    <p>· 点击弹窗头部<strong>侧边栏图标按钮</strong></p>
+    <p>· <strong>右键工具栏扩展图标</strong>，选择「在侧边栏打开 Link Hub」</p>
+    <p>侧边栏不会像弹窗一样点击别处就关闭，可以一边工作一边保持打开；点击链接后在新标签页打开，侧边栏继续保持；标签折叠、书签开关、主题色等设置与弹窗模式互通。</p>
+    <p>在侧边栏中点击头部<strong>「变为弹窗」图标按钮</strong>可切回弹窗模式；浏览器暂不支持自动关闭侧边栏，切换后侧边栏需手动收起。</p>
+    <p class="tip">工具栏图标点击仍是弹窗模式，两种模式并存、随时切换；侧边栏功能需要 Chrome 116 及以上版本，「变为弹窗」需要 Chrome 127 及以上。</p>
+  </section>
+</div>
+</body>
+</html>

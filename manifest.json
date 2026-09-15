@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Link Hub",
+  "version": "1.4.6",
+  "description": "测试/正式环境链接快速导航，支持一键复制账号密码",
+  "permissions": ["bookmarks", "sidePanel", "contextMenus"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Link Hub",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
