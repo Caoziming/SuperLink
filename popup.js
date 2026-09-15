@@ -1,9 +1,10 @@
 // 平台徽章
 const PLATFORM_MAP = { pc: 'PC', wechat: '微信H5' };
 
-// 分组类型图标：书签分组 = 文件夹，内置分组（data.js）= 链环
+// 分组类型图标：书签分组 = 文件夹，内置分组（data.js）= 链环，「全部」= 书签
 const FOLDER_ICON = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>';
 const LINK_ICON = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
+const BOOKMARK_ICON = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
 
 // 侧边栏模式（sidepanel.html 与 popup.html 共用本脚本）
 const IS_SIDEPANEL = document.body.classList.contains('mode-sidepanel');
@@ -123,9 +124,11 @@ function renderTabs() {
       ? groups.reduce((n, g) => n + g.items.length, 0)
       : groups.find(g => g.group === name).items.length;
 
-    // 分组图标开启时用类型图标（文件夹/链环）代替彩点，「全部」保持彩点
+    // 分组图标开启时用类型图标（书签/文件夹/链环）代替彩点
     const lead = document.createElement('span');
-    const typeIcon = state.showGroupIcons ? groupTypeIcon(name) : null;
+    const typeIcon = state.showGroupIcons
+      ? (name === ALL_TAB.name ? BOOKMARK_ICON : groupTypeIcon(name))
+      : null;
     if (typeIcon) {
       lead.className = 'tab-ic';
       lead.innerHTML = typeIcon;
