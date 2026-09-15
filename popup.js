@@ -1,5 +1,3 @@
-// 环境徽章
-const ENV_MAP = { test: '测试', prod: '正式' };
 // 平台徽章
 const PLATFORM_MAP = { pc: 'PC', wechat: '微信H5' };
 
@@ -50,7 +48,6 @@ function matchItem(item, groupName, words) {
     shortUrl(item.url),
     item.note || '',
     groupName,
-    ENV_MAP[item.env] || item.env,
     PLATFORM_MAP[item.platform] || '',
     ...(item.accounts || []).flatMap(a => [a.label || '', a.username, a.password])
   ].join(' ').toLowerCase();
@@ -208,13 +205,6 @@ function renderItem(item) {
   name.className = 'item-name';
   name.textContent = item.name;
   top.appendChild(name);
-
-  if (item.env) {
-    const envBadge = document.createElement('span');
-    envBadge.className = `badge badge--${item.env}`;
-    envBadge.textContent = ENV_MAP[item.env] || item.env;
-    top.appendChild(envBadge);
-  }
 
   if (item.platform && PLATFORM_MAP[item.platform]) {
     const pfBadge = document.createElement('span');

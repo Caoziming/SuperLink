@@ -14,13 +14,9 @@
   --clear-bg: #e9ebf0;
   --clear-bg-hover: #d9dce4;
 
-  --test-bg: #fff3e0;
-  --test-text: #b25e09;
-  --test-border: #ffd9a0;
-
-  --prod-bg: #e8f7ef;
-  --prod-text: #1f9254;
-  --prod-border: #b5e5c9;
+  --note-bg: #fff3e0;
+  --note-text: #b25e09;
+  --note-border: #ffd9a0;
 
   --pc-bg: #eef3fe;
   --pc-text: #3564d4;
@@ -53,13 +49,9 @@
   --clear-bg: #2c2f37;
   --clear-bg-hover: #383c45;
 
-  --test-bg: #38290f;
-  --test-text: #ffb45e;
-  --test-border: #55401c;
-
-  --prod-bg: #0f2b1c;
-  --prod-text: #52c78f;
-  --prod-border: #1d4530;
+  --note-bg: #38290f;
+  --note-text: #ffb45e;
+  --note-border: #55401c;
 
   --pc-bg: #1a2740;
   --pc-text: #8ab0f8;
@@ -480,18 +472,6 @@ body {
   white-space: nowrap;
 }
 
-.badge--test {
-  background: var(--test-bg);
-  color: var(--test-text);
-  border: 1px solid var(--test-border);
-}
-
-.badge--prod {
-  background: var(--prod-bg);
-  color: var(--prod-text);
-  border: 1px solid var(--prod-border);
-}
-
 .badge--pc {
   background: var(--pc-bg);
   color: var(--pc-text);
@@ -521,9 +501,9 @@ body {
 .item-note {
   margin-top: 6px;
   font-size: 11px;
-  color: var(--test-text);
-  background: var(--test-bg);
-  border: 1px solid var(--test-border);
+  color: var(--note-text);
+  background: var(--note-bg);
+  border: 1px solid var(--note-border);
   border-radius: 6px;
   padding: 3px 8px;
   line-height: 1.5;
