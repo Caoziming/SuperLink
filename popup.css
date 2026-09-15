@@ -250,12 +250,13 @@ body {
   gap: 6px;
   flex: 1;
   min-width: 0;
+  overflow: hidden;
+  transition: max-height 0.22s ease;
 }
 
-/* 折叠状态：只保留第一行 */
+/* 折叠状态：只保留第一行（高度切换由 popup.js 驱动平滑过渡） */
 .tabs.collapsed {
   max-height: 28px;
-  overflow: hidden;
 }
 
 .tabs-toggle {
@@ -476,6 +477,15 @@ body {
   flex-wrap: wrap;
   /* 右侧留出复制按钮的空间，避免名称/徽章被遮挡 */
   padding-right: 26px;
+}
+
+/* 站点图标：链接名称前 16px 圆角小图（favicon 加载失败时自动移除） */
+.item-favicon {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: var(--chip-bg);
+  flex-shrink: 0;
 }
 
 .item-name {

@@ -217,9 +217,30 @@ function renderItem(item) {
   const isWechat = item.platform === 'wechat';
   el.className = 'item' + (isWechat ? ' item--wechat' : '');
 
-  // 顶部：名称 + 徽章
+  // 顶部：站点图标 + 名称 + 徽章
   const top = document.createElement('div');
   top.className = 'item-top';
+
+  // 站点图标：优先读浏览器 favicon 缓存（_favicon），未命中则回退请求站点自身 favicon，均失败不占位
+  if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+    let origin = '';
+    try { origin = new URL(item.url).origin; } catch { /* 非法 URL 不展示图标 */ }
+    if (origin) {
+      const favicon = document.createElement('img');
+      favicon.className = 'item-favicon';
+      favicon.alt = '';
+      favicon.src = `chrome-extension://${chrome.runtime.id}/_favicon/?pageUrl=${encodeURIComponent(item.url)}&size=32`;
+      favicon.addEventListener('error', () => {
+        if (!favicon.dataset.fb) {
+          favicon.dataset.fb = '1';
+          favicon.src = origin + '/favicon.ico';
+        } else {
+          favicon.remove();
+        }
+      });
+      top.appendChild(favicon);
+    }
+  }
 
   const name = document.createElement('span');
   name.className = 'item-name';
@@ -689,14 +710,38 @@ function applyTabsCollapse() {
   const tabsEl = document.getElementById('tabs');
   tabsEl.classList.toggle('collapsed', state.tabsCollapsed);
   tabsToggleBtn.classList.toggle('expanded', !state.tabsCollapsed);
-  tabsToggleLabel.textContent = state.tabsCollapsed ? '展开' : '收起';
+
+  // 收起时统计被隐藏的标签数（超出第一行的），显示在按钮上
+  let hidden = 0;
+  if (state.tabsCollapsed) {
+    const firstRowTop = tabsEl.children[0] ? tabsEl.children[0].offsetTop : 0;
+    hidden = [...tabsEl.children].filter(b => b.offsetTop > firstRowTop + 5).length;
+  }
+  tabsToggleLabel.textContent = state.tabsCollapsed ? `展开 +${hidden}` : '收起';
+
   // 标签只有一行时无需折叠，隐藏按钮
   tabsToggleBtn.hidden = tabsEl.scrollHeight <= TABS_ROW_HEIGHT;
+}
+
+// 平滑高度过渡：先固定当前高度为起点，再切换到目标高度触发 transition
+function animateTabsTo(targetPx) {
+  const tabsEl = document.getElementById('tabs');
+  tabsEl.style.maxHeight = tabsEl.scrollHeight + 'px';
+  void tabsEl.offsetHeight; // 强制回流，锁定动画起点
+  tabsEl.style.maxHeight = targetPx + 'px';
+  const done = e => {
+    if (e.propertyName !== 'max-height') return;
+    tabsEl.removeEventListener('transitionend', done);
+    tabsEl.style.maxHeight = ''; // 交还给 collapsed class / 自然高度
+  };
+  tabsEl.addEventListener('transitionend', done);
 }
 
 tabsToggleBtn.addEventListener('click', () => {
   state.tabsCollapsed = !state.tabsCollapsed;
   try { localStorage.setItem(TABS_COLLAPSED_KEY, state.tabsCollapsed ? '1' : '0'); } catch { /* 忽略存储异常 */ }
+  const tabsEl = document.getElementById('tabs');
+  animateTabsTo(state.tabsCollapsed ? TABS_ROW_HEIGHT - 2 : tabsEl.scrollHeight);
   applyTabsCollapse();
 });
 
