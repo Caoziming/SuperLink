@@ -897,25 +897,32 @@ body.mode-sidepanel.layout-h .result-bar {
   display: none;
 }
 
+/* 左右布局下禁用上下布局的折叠限高（28px 会把纵向列表裁到只剩一个标签） */
+body.mode-sidepanel.layout-h .tabs.collapsed {
+  max-height: none;
+}
+
 body.mode-sidepanel.layout-h .groups {
   grid-area: content;
   overflow-y: auto;
 }
 
 /* ---------- 多列布局：分组盒子展开（display: contents），条目进入网格，分组标题跨全部列 ---------- */
+/* 列宽上限 360px 且网格整体居中，条目少时卡片不会被拉得过宽过散 */
 body.mode-sidepanel.cols-2 .groups,
 body.mode-sidepanel.cols-3 .groups {
   display: grid;
   gap: 0 10px;
   align-items: start;
+  justify-content: center;
 }
 
 body.mode-sidepanel.cols-2 .groups {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 360px));
 }
 
 body.mode-sidepanel.cols-3 .groups {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 360px));
 }
 
 body.mode-sidepanel.cols-2 .group,
