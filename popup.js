@@ -436,19 +436,31 @@ clearBtn.addEventListener('click', () => {
 
 const backTopBtn = document.getElementById('backTop');
 
-// 页面滚动超过一屏的三分之一时显示按钮，回到顶部附近隐藏
-window.addEventListener('scroll', () => {
-  backTopBtn.classList.toggle('show', window.scrollY > window.innerHeight / 3);
-}, { passive: true });
+// 当前滚动容器：左右布局下内容区独立滚动（.groups），其余为窗口
+function scrollTarget() {
+  return document.body.classList.contains('layout-h')
+    ? document.getElementById('groups')
+    : window;
+}
+
+function updateBackTop(scroller) {
+  const y = scroller === window ? scroller.scrollY : scroller.scrollTop;
+  const h = scroller === window ? scroller.innerHeight : scroller.clientHeight;
+  backTopBtn.classList.toggle('show', y > h / 3);
+}
+
+// 页面滚动超过一屏的三分之一时显示按钮，回到顶部附近隐藏（窗口与内容区都监听）
+window.addEventListener('scroll', () => updateBackTop(window), { passive: true });
+document.getElementById('groups').addEventListener('scroll', e => updateBackTop(e.target), { passive: true });
 
 // 一键平滑回到顶部
 backTopBtn.addEventListener('click', () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  scrollTarget().scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 // 切换标签 / 清空搜索后回到顶部并隐藏按钮
 function backToTopQuietly() {
-  window.scrollTo({ top: 0 });
+  scrollTarget().scrollTo({ top: 0 });
   backTopBtn.classList.remove('show');
 }
 
@@ -683,6 +695,22 @@ function initCols() {
   applyCols(cols);
 }
 
+// 分类布局：v 上下（默认）/ h 左右（仅侧边栏模式生效）
+const LAYOUT_KEY = 'superLinkLayout';
+
+function applyLayout(layout) {
+  document.body.classList.toggle('layout-h', layout === 'h');
+  document.querySelectorAll('.layout-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.layout === layout);
+  });
+}
+
+function initLayout() {
+  let layout = 'v';
+  try { layout = localStorage.getItem(LAYOUT_KEY) === 'h' ? 'h' : 'v'; } catch { /* 忽略存储异常 */ }
+  applyLayout(layout);
+}
+
 if (colsBtn) {
   colsBtn.addEventListener('click', e => {
     e.stopPropagation();
@@ -690,6 +718,14 @@ if (colsBtn) {
   });
 
   colsPanel.addEventListener('click', e => e.stopPropagation());
+
+  document.querySelectorAll('.layout-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const layout = btn.dataset.layout;
+      try { localStorage.setItem(LAYOUT_KEY, layout); } catch { /* 忽略存储异常 */ }
+      applyLayout(layout);
+    });
+  });
 
   document.querySelectorAll('.col-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -842,6 +878,7 @@ initTheme();
 initBookmarks();
 initGroupIcons();
 initCols();
+initLayout();
 initTabsCollapse();
 renderTabs();
 render();
