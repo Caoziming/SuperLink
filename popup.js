@@ -801,73 +801,40 @@ document.getElementById('historyBtn').addEventListener('click', () => {
   if (!IS_SIDEPANEL) window.close();
 });
 
-// 弹窗模式：切换到侧边栏常驻模式（sidepanel.html 中无此按钮）
-const sidePanelBtn = document.getElementById('sidePanelBtn');
-if (sidePanelBtn) {
-  sidePanelBtn.addEventListener('click', () => {
-    if (typeof chrome === 'undefined' || !chrome.sidePanel) {
-      showToast('当前浏览器不支持侧边栏 API（需 Chrome/Edge 116+）');
-      return;
-    }
-    const fail = err => {
-      const msg = (err && err.message) || String(err);
-      console.warn('sidePanel.open failed:', err);
-      showToast(`侧边栏打开失败：${msg}；可右键工具栏图标打开`);
-    };
-    // 统一把「同步抛错」转成被拒 Promise，避免中断点击处理器（Edge 对不支持的
-    // windowId 可能同步 throw 而非 reject）
-    const safeOpen = opts => {
-      try {
-        return Promise.resolve(chrome.sidePanel.open(opts));
-      } catch (err) {
-        return Promise.reject(err);
-      }
-    };
-    const closePopup = () => window.close();
+// ---------- 启动模式（点击工具栏图标的打开方式：侧边栏 / 弹窗） ----------
+// 配置写入 chrome.storage.local（与 background.js 共享），后台据此调用
+// setPopup / setPanelBehavior 即时重新生效；浏览器重启后按配置固定打开
+const OPEN_MODE_KEY = 'superLinkOpenMode';
 
-    // 主路径：手势内同步调用（Chrome 支持 WINDOW_ID_CURRENT 常量）
-    const constWid = chrome.windows && chrome.windows.WINDOW_ID_CURRENT != null
-      ? chrome.windows.WINDOW_ID_CURRENT
-      : -2;
-    safeOpen({ windowId: constWid })
-      .then(closePopup)
-      .catch(() => {
-        // Edge 兜底：改用真实窗口 ID 重试（Promise 链保留用户激活状态）
-        if (!chrome.windows || !chrome.windows.getCurrent) { fail('no chrome.windows'); return; }
-        chrome.windows.getCurrent()
-          .then(win => safeOpen({ windowId: win.id }))
-          .then(closePopup)
-          .catch(fail);
-      });
+function applyOpenModeUI(mode) {
+  document.querySelectorAll('.openmode-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.omode === mode);
   });
 }
 
-// 侧边栏模式：切换回弹窗模式（popup.html 中无此按钮）
-// 注：浏览器未提供关闭侧边栏的 API，切换后侧边栏保持打开，需手动收起
-const popupBtn = document.getElementById('popupBtn');
-if (popupBtn) {
-  // Edge 对 action.openPopup 可能仍保留旧限制（Chrome 127 起才对所有扩展开放）
-  popupBtn.addEventListener('click', () => {
-    if (typeof chrome === 'undefined' || !chrome.action || !chrome.action.openPopup) {
-      showToast(IS_EDGE
-        ? 'Edge 暂不支持自动打开弹窗，请点击工具栏图标打开'
-        : '当前浏览器不支持，请点击工具栏图标打开弹窗');
+document.querySelectorAll('.openmode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mode = btn.dataset.omode;
+    if (typeof chrome === 'undefined' || !chrome.storage || !chrome.storage.local) {
+      showToast('当前环境不支持启动模式设置');
       return;
     }
-    // 同步 throw 防护（与侧边栏打开逻辑一致）
-    const safeOpen = () => {
-      try {
-        return Promise.resolve(chrome.action.openPopup());
-      } catch (err) {
-        return Promise.reject(err);
-      }
-    };
-    safeOpen()
-      .catch(err => {
-        const msg = (err && err.message) || String(err);
-        console.warn('action.openPopup failed:', err);
-        showToast(`打开弹窗失败：${msg}${IS_EDGE ? '（Edge 可能不支持此 API，请点击工具栏图标）' : '；请点击工具栏图标'}`);
-      });
+    chrome.storage.local.set({ [OPEN_MODE_KEY]: mode }, () => {
+      applyOpenModeUI(mode);
+      showToast(mode === 'sidepanel'
+        ? '已设为侧边栏启动：点击工具栏图标将打开侧边栏'
+        : '已设为弹窗启动：点击工具栏图标将打开弹窗');
+    });
+  });
+});
+
+function initOpenMode() {
+  if (typeof chrome === 'undefined' || !chrome.storage || !chrome.storage.local) {
+    applyOpenModeUI('sidepanel');
+    return;
+  }
+  chrome.storage.local.get(OPEN_MODE_KEY, got => {
+    applyOpenModeUI(got[OPEN_MODE_KEY] === 'popup' ? 'popup' : 'sidepanel');
   });
 }
 
@@ -879,6 +846,7 @@ initBookmarks();
 initGroupIcons();
 initCols();
 initLayout();
+initOpenMode();
 initTabsCollapse();
 renderTabs();
 render();

@@ -831,11 +831,6 @@ body.mode-sidepanel {
   min-width: 260px;
 }
 
-/* 仅弹窗模式展示的元素（如「在侧边栏打开」按钮） */
-.mode-sidepanel .panel-only {
-  display: none !important;
-}
-
 /* 仅侧边栏模式展示的元素（如「变为弹窗」按钮） */
 body:not(.mode-sidepanel) .sidepanel-only {
   display: none !important;
