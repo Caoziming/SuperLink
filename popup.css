@@ -918,10 +918,16 @@ body.mode-sidepanel.cols-3 .groups-inner {
   column-gap: 10px;
 }
 
-/* 分组标题尽量不与条目分离，卡片不被拦腰截断 */
+/* 分组标题独占整行（跨全部列），卡片在各标题之间砌墙式紧密排列 */
+body.mode-sidepanel.cols-2 .group,
+body.mode-sidepanel.cols-3 .group {
+  display: contents;
+}
+
 body.mode-sidepanel.cols-2 .group-title,
 body.mode-sidepanel.cols-3 .group-title {
-  break-after: avoid-column;
+  column-span: all;
+  margin-top: 8px;
 }
 
 body.mode-sidepanel.cols-2 .item,
