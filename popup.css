@@ -980,30 +980,59 @@ body.divider-dragging {
   cursor: col-resize;
 }
 
-/* ---------- 多列布局：砌墙式（CSS 多列），每列内部与单列一样紧密 ---------- */
-body.mode-sidepanel.cols-2 .groups-inner {
-  columns: 2;
+/* ---------- 多列布局：砌墙式（CSS 多列），每列内部与单列一样紧密，最多 8 列 ---------- */
+body.mode-sidepanel.cols-2 .groups-inner,
+body.mode-sidepanel.cols-3 .groups-inner,
+body.mode-sidepanel.cols-4 .groups-inner,
+body.mode-sidepanel.cols-5 .groups-inner,
+body.mode-sidepanel.cols-6 .groups-inner,
+body.mode-sidepanel.cols-7 .groups-inner,
+body.mode-sidepanel.cols-8 .groups-inner, {
   column-gap: 10px;
 }
 
-body.mode-sidepanel.cols-3 .groups-inner {
-  columns: 3;
-  column-gap: 10px;
-}
+body.mode-sidepanel.cols-2 .groups-inner { columns: 2; }
+body.mode-sidepanel.cols-3 .groups-inner { columns: 3; }
+body.mode-sidepanel.cols-4 .groups-inner { columns: 4; }
+body.mode-sidepanel.cols-5 .groups-inner { columns: 5; }
+body.mode-sidepanel.cols-6 .groups-inner { columns: 6; }
+body.mode-sidepanel.cols-7 .groups-inner { columns: 7; }
+body.mode-sidepanel.cols-8 .groups-inner { columns: 8; }
 
 /* 分组标题独占整行（跨全部列），卡片在各标题之间砌墙式紧密排列 */
 body.mode-sidepanel.cols-2 .group,
-body.mode-sidepanel.cols-3 .group {
+body.mode-sidepanel.cols-3 .group,
+body.mode-sidepanel.cols-4 .group,
+body.mode-sidepanel.cols-5 .group,
+body.mode-sidepanel.cols-6 .group,
+body.mode-sidepanel.cols-7 .group,
+body.mode-sidepanel.cols-8 .group, {
   display: contents;
 }
 
-body.mode-sidepanel.cols-2 .group-title,
+body.mode-sidepanel.cols-2 .group-title {
 body.mode-sidepanel.cols-3 .group-title {
+body.mode-sidepanel.cols-4 .group-title {
+body.mode-sidepanel.cols-5 .group-title {
+body.mode-sidepanel.cols-6 .group-title {
+body.mode-sidepanel.cols-7 .group-title {
+body.mode-sidepanel.cols-8 .group-title {
   column-span: all;
   margin-top: 8px;
 }
 
-body.mode-sidepanel.cols-2 .item,
+body.mode-sidepanel.cols-2 .item {
 body.mode-sidepanel.cols-3 .item {
+body.mode-sidepanel.cols-4 .item {
+body.mode-sidepanel.cols-5 .item {
+body.mode-sidepanel.cols-6 .item {
+body.mode-sidepanel.cols-7 .item {
+body.mode-sidepanel.cols-8 .item {
   break-inside: avoid;
+}
+
+/* 列数面板：8 个数字按钮等宽紧凑排布 */
+.col-seg .col-btn {
+  padding: 6px 0;
+  min-width: 0;
 }

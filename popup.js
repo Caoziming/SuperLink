@@ -702,7 +702,7 @@ const colsBtn = document.getElementById('colsBtn');
 const colsPanel = document.getElementById('colsPanel');
 
 function applyCols(cols) {
-  document.body.classList.remove('cols-1', 'cols-2', 'cols-3');
+  document.body.classList.remove('cols-1', 'cols-2', 'cols-3', 'cols-4', 'cols-5', 'cols-6', 'cols-7', 'cols-8');
   document.body.classList.add(`cols-${cols}`);
   document.querySelectorAll('.col-btn').forEach(b => {
     b.classList.toggle('active', Number(b.dataset.cols) === cols);
@@ -712,7 +712,7 @@ function applyCols(cols) {
 function initCols() {
   let cols = 1;
   try { cols = Number(localStorage.getItem(COLS_KEY)) || 1; } catch { /* 忽略存储异常 */ }
-  if (![1, 2, 3].includes(cols)) cols = 1;
+  if (![1, 2, 3, 4, 5, 6, 7, 8].includes(cols)) cols = 1;
   applyCols(cols);
 }
 
