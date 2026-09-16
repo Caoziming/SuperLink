@@ -167,7 +167,7 @@ function groupTypeIcon(name) {
 // ---------- 渲染 ----------
 
 function render() {
-  const container = document.getElementById('groups');
+  const container = document.getElementById('groupsInner');
   const resultBar = document.getElementById('resultBar');
   container.innerHTML = '';
 

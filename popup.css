@@ -907,31 +907,24 @@ body.mode-sidepanel.layout-h .groups {
   overflow-y: auto;
 }
 
-/* ---------- 多列布局：分组盒子展开（display: contents），条目进入网格，分组标题跨全部列 ---------- */
-/* 列宽上限 360px 且网格整体居中，条目少时卡片不会被拉得过宽过散 */
-body.mode-sidepanel.cols-2 .groups,
-body.mode-sidepanel.cols-3 .groups {
-  display: grid;
-  gap: 0 10px;
-  align-items: start;
-  justify-content: center;
+/* ---------- 多列布局：砌墙式（CSS 多列），每列内部与单列一样紧密 ---------- */
+body.mode-sidepanel.cols-2 .groups-inner {
+  columns: 2;
+  column-gap: 10px;
 }
 
-body.mode-sidepanel.cols-2 .groups {
-  grid-template-columns: repeat(2, minmax(0, 360px));
+body.mode-sidepanel.cols-3 .groups-inner {
+  columns: 3;
+  column-gap: 10px;
 }
 
-body.mode-sidepanel.cols-3 .groups {
-  grid-template-columns: repeat(3, minmax(0, 360px));
-}
-
-body.mode-sidepanel.cols-2 .group,
-body.mode-sidepanel.cols-3 .group {
-  display: contents;
-}
-
+/* 分组标题尽量不与条目分离，卡片不被拦腰截断 */
 body.mode-sidepanel.cols-2 .group-title,
 body.mode-sidepanel.cols-3 .group-title {
-  grid-column: 1 / -1;
-  margin-top: 6px;
+  break-after: avoid-column;
+}
+
+body.mode-sidepanel.cols-2 .item,
+body.mode-sidepanel.cols-3 .item {
+  break-inside: avoid;
 }
