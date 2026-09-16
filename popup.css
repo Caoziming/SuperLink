@@ -987,7 +987,7 @@ body.mode-sidepanel.cols-4 .groups-inner,
 body.mode-sidepanel.cols-5 .groups-inner,
 body.mode-sidepanel.cols-6 .groups-inner,
 body.mode-sidepanel.cols-7 .groups-inner,
-body.mode-sidepanel.cols-8 .groups-inner, {
+body.mode-sidepanel.cols-8 .groups-inner {
   column-gap: 10px;
 }
 
@@ -1006,27 +1006,27 @@ body.mode-sidepanel.cols-4 .group,
 body.mode-sidepanel.cols-5 .group,
 body.mode-sidepanel.cols-6 .group,
 body.mode-sidepanel.cols-7 .group,
-body.mode-sidepanel.cols-8 .group, {
+body.mode-sidepanel.cols-8 .group {
   display: contents;
 }
 
-body.mode-sidepanel.cols-2 .group-title {
-body.mode-sidepanel.cols-3 .group-title {
-body.mode-sidepanel.cols-4 .group-title {
-body.mode-sidepanel.cols-5 .group-title {
-body.mode-sidepanel.cols-6 .group-title {
-body.mode-sidepanel.cols-7 .group-title {
+body.mode-sidepanel.cols-2 .group-title,
+body.mode-sidepanel.cols-3 .group-title,
+body.mode-sidepanel.cols-4 .group-title,
+body.mode-sidepanel.cols-5 .group-title,
+body.mode-sidepanel.cols-6 .group-title,
+body.mode-sidepanel.cols-7 .group-title,
 body.mode-sidepanel.cols-8 .group-title {
   column-span: all;
   margin-top: 8px;
 }
 
-body.mode-sidepanel.cols-2 .item {
-body.mode-sidepanel.cols-3 .item {
-body.mode-sidepanel.cols-4 .item {
-body.mode-sidepanel.cols-5 .item {
-body.mode-sidepanel.cols-6 .item {
-body.mode-sidepanel.cols-7 .item {
+body.mode-sidepanel.cols-2 .item,
+body.mode-sidepanel.cols-3 .item,
+body.mode-sidepanel.cols-4 .item,
+body.mode-sidepanel.cols-5 .item,
+body.mode-sidepanel.cols-6 .item,
+body.mode-sidepanel.cols-7 .item,
 body.mode-sidepanel.cols-8 .item {
   break-inside: avoid;
 }
