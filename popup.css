@@ -851,14 +851,15 @@ body:not(.mode-sidepanel) .sidepanel-only {
 }
 
 /* ---------- 分类布局：左右（仅侧边栏模式，默认上下） ---------- */
-/* body 直接做网格：头部通栏，标签列在左、内容在右，各自独立滚动 */
+/* body 直接做网格：头部通栏，标签列在左、可拖拽分隔线、内容在右，各自独立滚动 */
+/* 分类列宽由 --tabs-w 控制（分隔线拖拽调整），默认 138px */
 body.mode-sidepanel.layout-h {
   display: grid;
-  grid-template-columns: 138px minmax(0, 1fr);
+  grid-template-columns: var(--tabs-w, 138px) 5px minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr);
   grid-template-areas:
-    "header header"
-    "tabs content";
+    "header header header"
+    "tabs divider content";
   height: 100vh;
   overflow: hidden;
 }
@@ -871,13 +872,18 @@ body.mode-sidepanel.layout-h .tabs-bar {
   grid-area: tabs;
   flex-direction: column;
   overflow-y: auto;
+  /* grid 子项默认 min-height:auto 会被内容撑破而非内部滚动，必须显式归零 */
+  min-height: 0;
   padding: 10px 8px;
-  border-right: 1px solid var(--border);
 }
 
 body.mode-sidepanel.layout-h .tabs {
   flex-direction: column;
   flex-wrap: nowrap;
+  /* 按内容自然高度且不裁切（覆盖折叠功能的 overflow:hidden / flex:1），
+     溢出交给外层 tabs-bar 滚动，否则标签会被无声裁掉 */
+  flex: 0 0 auto;
+  overflow: visible;
 }
 
 body.mode-sidepanel.layout-h .tab {
@@ -900,6 +906,42 @@ body.mode-sidepanel.layout-h .tabs.collapsed {
 body.mode-sidepanel.layout-h .groups {
   grid-area: content;
   overflow-y: auto;
+  min-height: 0;
+}
+
+/* ---------- 左右布局分隔线（拖拽调整分类区宽度） ---------- */
+.layout-divider {
+  display: none;
+}
+
+body.mode-sidepanel.layout-h .layout-divider {
+  display: block;
+  grid-area: divider;
+  position: relative;
+  cursor: col-resize;
+}
+
+/* 居中 2px 细线，悬停 / 拖拽时高亮为主题色 */
+body.mode-sidepanel.layout-h .layout-divider::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 1.5px;
+  right: 1.5px;
+  background: var(--border);
+  transition: background 0.15s;
+}
+
+body.mode-sidepanel.layout-h .layout-divider:hover::after,
+body.mode-sidepanel.layout-h .layout-divider.dragging::after {
+  background: var(--accent);
+}
+
+/* 拖拽期间禁用文本选择，指针保持调整形态 */
+body.divider-dragging {
+  user-select: none;
+  cursor: col-resize;
 }
 
 /* ---------- 多列布局：砌墙式（CSS 多列），每列内部与单列一样紧密 ---------- */

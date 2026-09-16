@@ -736,6 +736,67 @@ if (colsBtn) {
   });
 }
 
+// ---------- 左右布局分隔线拖拽（仅侧边栏模式） ----------
+
+const TABS_W_KEY = 'superLinkTabsWidth';
+const TABS_DEFAULT_W = 138;
+const TABS_MIN_W = 110; // 分类区最小宽度
+
+const layoutDivider = document.getElementById('layoutDivider');
+
+function setTabsWidth(px, save = true) {
+  document.documentElement.style.setProperty('--tabs-w', px + 'px');
+  if (save) {
+    try { localStorage.setItem(TABS_W_KEY, String(px)); } catch { /* 忽略存储异常 */ }
+  }
+}
+
+function initTabsWidth() {
+  if (!layoutDivider) return;
+  let w = TABS_DEFAULT_W;
+  try { w = Number(localStorage.getItem(TABS_W_KEY)) || TABS_DEFAULT_W; } catch { /* 忽略存储异常 */ }
+  if (w < TABS_MIN_W) w = TABS_MIN_W;
+  document.documentElement.style.setProperty('--tabs-w', w + 'px');
+}
+
+if (layoutDivider) {
+  let dragging = false;
+  let currentW = TABS_DEFAULT_W;
+
+  layoutDivider.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    dragging = true;
+    layoutDivider.classList.add('dragging');
+    document.body.classList.add('divider-dragging');
+    try { layoutDivider.setPointerCapture(e.pointerId); } catch { /* 旧环境无捕获 */ }
+  });
+
+  layoutDivider.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const bodyRect = document.body.getBoundingClientRect();
+    // 分类区最小 110px；内容区至少保留 260px
+    const maxW = Math.max(TABS_MIN_W, Math.round(bodyRect.width) - 260);
+    currentW = Math.min(Math.max(Math.round(e.clientX - bodyRect.left), TABS_MIN_W), maxW);
+    setTabsWidth(currentW, false);
+  });
+
+  const endDrag = () => {
+    if (!dragging) return;
+    dragging = false;
+    layoutDivider.classList.remove('dragging');
+    document.body.classList.remove('divider-dragging');
+    setTabsWidth(currentW);
+  };
+  layoutDivider.addEventListener('pointerup', endDrag);
+  layoutDivider.addEventListener('pointercancel', endDrag);
+
+  // 双击分隔线恢复默认宽度
+  layoutDivider.addEventListener('dblclick', () => {
+    currentW = TABS_DEFAULT_W;
+    setTabsWidth(TABS_DEFAULT_W);
+  });
+}
+
 // ---------- 标签折叠 / 帮助 ----------
 
 const TABS_COLLAPSED_KEY = 'superLinkTabsCollapsed';
@@ -847,6 +908,7 @@ initGroupIcons();
 initCols();
 initLayout();
 initOpenMode();
+initTabsWidth();
 initTabsCollapse();
 renderTabs();
 render();
