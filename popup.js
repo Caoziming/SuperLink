@@ -892,7 +892,7 @@ document.querySelectorAll('.openmode-btn').forEach(btn => {
       showToast(mode === 'sidepanel'
         ? '已设为侧边栏启动：点击工具栏图标将打开侧边栏'
         : mode === 'window'
-          ? '已设为独立窗口启动：点击工具栏图标将打开独立窗口（默认 700px 宽）'
+          ? '已设为独立窗口启动：点击工具栏图标将打开独立窗口（默认 800px 宽）'
           : '已设为弹窗启动：点击工具栏图标将打开弹窗');
     });
   });
