@@ -107,13 +107,22 @@ function loadBookmarks() {
   });
 }
 
+// 搜索过滤：返回含匹配条目的分组（条目已筛选），renderTabs 与 render 共用
+function searchGroups(words) {
+  return visibleGroups()
+    .map(g => ({ ...g, items: g.items.filter(item => matchItem(item, g.group, words)) }))
+    .filter(g => g.items.length > 0);
+}
+
 // ---------- 标签栏 ----------
 
 function renderTabs() {
   const tabsEl = document.getElementById('tabs');
   tabsEl.innerHTML = '';
 
-  const groups = visibleGroups();
+  // 搜索时标签列同步只显示有匹配条目的分组，与内容区一致
+  const words = state.keyword.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const groups = words.length > 0 ? searchGroups(words) : visibleGroups();
   const tabs = [ALL_TAB.name, ...groups.map(g => g.group)];
   tabs.forEach(name => {
     const btn = document.createElement('button');
@@ -176,9 +185,7 @@ function render() {
   let groupsToShow;
   if (words.length > 0) {
     // 搜索模式：全局模糊匹配
-    groupsToShow = visibleGroups()
-      .map(g => ({ ...g, items: g.items.filter(item => matchItem(item, g.group, words)) }))
-      .filter(g => g.items.length > 0);
+    groupsToShow = searchGroups(words);
     resultBar.hidden = false;
     resultBar.innerHTML = `找到 <span class="kw">${escapeHtml(state.keyword.trim())}</span> · 共 ${groupsToShow.reduce((n, g) => n + g.items.length, 0)} 条`;
   } else {
@@ -884,7 +891,9 @@ document.querySelectorAll('.openmode-btn').forEach(btn => {
       applyOpenModeUI(mode);
       showToast(mode === 'sidepanel'
         ? '已设为侧边栏启动：点击工具栏图标将打开侧边栏'
-        : '已设为弹窗启动：点击工具栏图标将打开弹窗');
+        : mode === 'window'
+          ? '已设为独立窗口启动：点击工具栏图标将打开独立窗口（默认 700px 宽）'
+          : '已设为弹窗启动：点击工具栏图标将打开弹窗');
     });
   });
 });
@@ -895,9 +904,27 @@ function initOpenMode() {
     return;
   }
   chrome.storage.local.get(OPEN_MODE_KEY, got => {
-    applyOpenModeUI(got[OPEN_MODE_KEY] === 'popup' ? 'popup' : 'sidepanel');
+    const v = got[OPEN_MODE_KEY];
+    applyOpenModeUI(v === 'popup' || v === 'window' ? v : 'sidepanel');
   });
 }
+
+// ---------- 独立窗口尺寸记忆（启动模式 = 独立窗口时生效） ----------
+// 浮窗内调整大小后记录 outerWidth/outerHeight，下次点击图标按上次尺寸打开
+let winSizeTimer = null;
+window.addEventListener('resize', () => {
+  if (typeof chrome === 'undefined' || !chrome.windows) return;
+  clearTimeout(winSizeTimer);
+  winSizeTimer = setTimeout(() => {
+    chrome.windows.getCurrent(win => {
+      if (win && win.type === 'popup' && win.width >= 400 && win.height >= 400) {
+        try {
+          chrome.storage.local.set({ superLinkWinSize: { w: win.width, h: win.height } });
+        } catch { /* 忽略存储异常 */ }
+      }
+    });
+  }, 400);
+});
 
 // ---------- 初始化 ----------
 
