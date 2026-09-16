@@ -467,10 +467,17 @@ function updateBackTop(scroller) {
 window.addEventListener('scroll', () => updateBackTop(window), { passive: true });
 document.getElementById('groups').addEventListener('scroll', e => updateBackTop(e.target), { passive: true });
 
-// 一键平滑回到顶部
-backTopBtn.addEventListener('click', () => {
-  scrollTarget().scrollTo({ top: 0, behavior: 'smooth' });
-});
+// 一键平滑回到顶部 / 底部（左半置顶、右半置底）
+function scrollToEnd(bottom) {
+  const scroller = scrollTarget();
+  const max = scroller === window
+    ? document.documentElement.scrollHeight
+    : scroller.scrollHeight;
+  scroller.scrollTo({ top: bottom ? max : 0, behavior: 'smooth' });
+}
+
+document.querySelector('.bt-top').addEventListener('click', () => scrollToEnd(false));
+document.querySelector('.bt-bottom').addEventListener('click', () => scrollToEnd(true));
 
 // 切换标签 / 清空搜索后回到顶部并隐藏按钮
 function backToTopQuietly() {

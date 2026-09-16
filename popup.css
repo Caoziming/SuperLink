@@ -631,20 +631,9 @@ body {
   bottom: 14px;
   transform: translateX(-50%) translateY(6px);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  min-width: 110px;
-  padding: 7px 18px;
-  border: none;
+  align-items: stretch;
   border-radius: 99px;
   background: linear-gradient(90deg, #ff5f6d, #ffc371, #7ed957, #4facfe, #a18cd1);
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 600;
-  font-family: inherit;
-  letter-spacing: 1px;
-  cursor: pointer;
   box-shadow: 0 3px 14px rgba(79, 172, 254, 0.35);
   opacity: 0;
   pointer-events: none;
@@ -662,8 +651,49 @@ body {
   box-shadow: 0 4px 18px rgba(79, 172, 254, 0.55);
 }
 
-.back-top:active {
-  transform: translateX(-50%) translateY(1px);
+/* 半块按钮：左置顶 / 右置底，中缝细分隔线 */
+.bt-half {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  letter-spacing: 1px;
+  cursor: pointer;
+  padding: 7px 15px;
+  transition: background 0.15s;
+}
+
+.bt-half:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.bt-half:active {
+  opacity: 0.85;
+}
+
+.bt-top {
+  border-radius: 99px 0 0 99px;
+  position: relative;
+}
+
+.bt-top::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.bt-bottom {
+  border-radius: 0 99px 99px 0;
 }
 
 /* ---------- 主题色面板 ---------- */
