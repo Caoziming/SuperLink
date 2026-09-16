@@ -592,7 +592,7 @@ function applyMode(save = true) {
   }
   // 悬浮边框色依赖模式基色，切换后重新派生（不重复写存储）
   applyTheme(currentTheme, false);
-  document.querySelectorAll('.seg-btn').forEach(b => {
+  document.querySelectorAll('.colormode-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.mode === colorMode);
   });
 }
@@ -602,7 +602,7 @@ DARK_MQ.addEventListener('change', () => {
   if (colorMode === 'auto') applyMode(false);
 });
 
-document.querySelectorAll('.seg-btn').forEach(btn => {
+document.querySelectorAll('.colormode-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     colorMode = btn.dataset.mode;
     applyMode();
