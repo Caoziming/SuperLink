@@ -254,7 +254,14 @@ function renderItem(item) {
 
   const name = document.createElement('span');
   name.className = 'item-name';
-  name.textContent = item.name;
+  // 名称最多 20 字，超出截断显示省略号；悬停 title 可查看完整名称
+  const nameChars = [...String(item.name)];
+  if (nameChars.length > 20) {
+    name.textContent = nameChars.slice(0, 20).join('') + '…';
+    name.title = item.name;
+  } else {
+    name.textContent = item.name;
+  }
   top.appendChild(name);
 
   if (item.platform && PLATFORM_MAP[item.platform]) {

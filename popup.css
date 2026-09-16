@@ -493,6 +493,11 @@ body {
   font-weight: 600;
   margin-right: 2px;
   color: var(--text);
+  /* 窄列下 20 字仍放不下时单行省略兜底（完整名称已由 title 悬停提供） */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 .badge {
