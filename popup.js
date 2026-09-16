@@ -710,7 +710,17 @@ function applyLayout(layout) {
   document.querySelectorAll('.layout-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.layout === layout);
   });
+  updateBackTopCenter();
 }
+
+// 置顶按钮水平锚定内容区中心：布局切换 / 分隔线拖拽 / 窗口缩放后重算
+function updateBackTopCenter() {
+  const groups = document.getElementById('groups');
+  if (!groups) return;
+  const r = groups.getBoundingClientRect();
+  document.documentElement.style.setProperty('--bt-center', (r.left + r.width / 2) + 'px');
+}
+window.addEventListener('resize', updateBackTopCenter);
 
 function initLayout() {
   let layout = 'v';
@@ -753,6 +763,7 @@ const layoutDivider = document.getElementById('layoutDivider');
 
 function setTabsWidth(px, save = true) {
   document.documentElement.style.setProperty('--tabs-w', px + 'px');
+  updateBackTopCenter();
   if (save) {
     try { localStorage.setItem(TABS_W_KEY, String(px)); } catch { /* 忽略存储异常 */ }
   }
@@ -936,6 +947,7 @@ initCols();
 initLayout();
 initOpenMode();
 initTabsWidth();
+updateBackTopCenter();
 initTabsCollapse();
 renderTabs();
 render();

@@ -621,7 +621,8 @@ body {
 /* ---------- 底部置顶按钮（长条 + 彩色渐变） ---------- */
 .back-top {
   position: fixed;
-  left: 50%;
+  /* 水平位置锚定内容区中心（JS 写入 --bt-center），左右布局下仍居中于内容区而非视口 */
+  left: var(--bt-center, 50%);
   bottom: 14px;
   transform: translateX(-50%) translateY(6px);
   display: flex;
