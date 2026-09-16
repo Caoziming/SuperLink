@@ -8,6 +8,13 @@ const BOOKMARK_ICON = '<svg viewBox="0 0 24 24" width="12" height="12" fill="non
 
 // 侧边栏模式（sidepanel.html 与 popup.html 共用本脚本）
 const IS_SIDEPANEL = document.body.classList.contains('mode-sidepanel');
+
+// 独立窗口模式（window 类型为 popup）下，窗口标题去掉「侧边栏」后缀
+if (IS_SIDEPANEL && typeof chrome !== 'undefined' && chrome.windows && chrome.windows.getCurrent) {
+  chrome.windows.getCurrent(win => {
+    if (win && win.type === 'popup') document.title = 'Super Link';
+  });
+}
 // Edge 浏览器（UA 含 Edg/），用于历史页地址、openPopup 提示等浏览器差异处理
 const IS_EDGE = /Edg\//.test(navigator.userAgent);
 
