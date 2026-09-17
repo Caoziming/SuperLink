@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Super Link",
   "short_name": "SuperLink",
-  "version": "1.13.0",
+  "version": "1.13.1",
   "description": "自由定制的链接导航中心：分组管理、模糊搜索、浏览器书签导入、账号密码一键复制",
   "permissions": ["bookmarks", "sidePanel", "contextMenus", "favicon", "storage"],
   "background": {
