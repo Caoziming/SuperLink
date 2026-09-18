@@ -1029,3 +1029,126 @@ body.mode-sidepanel.cols-8 .item {
   padding: 6px 0;
   min-width: 0;
 }
+/* ---------- 右键菜单与编辑对话框 ---------- */
+.ctx-menu {
+  position: fixed;
+  z-index: 130;
+  min-width: 124px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(31, 35, 41, 0.18);
+  padding: 4px;
+}
+
+.ctx-menu button {
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 12px;
+  font-family: inherit;
+  text-align: left;
+  padding: 7px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.ctx-menu button:hover {
+  background: rgba(var(--accent-rgb), 0.1);
+  color: var(--accent);
+}
+
+.ctx-menu .ctx-del:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+}
+
+.edit-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 140;
+  background: rgba(31, 35, 41, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-dialog {
+  width: 300px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 10px 36px rgba(31, 35, 41, 0.22);
+}
+
+.edit-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.edit-dialog label {
+  display: block;
+  font-size: 11.5px;
+  color: var(--text-3);
+  margin-bottom: 8px;
+}
+
+.edit-dialog input {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 12.5px;
+  font-family: inherit;
+  padding: 7px 9px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.edit-dialog input:focus {
+  border-color: var(--accent);
+}
+
+.edit-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.edit-cancel,
+.edit-ok {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-2);
+  font-size: 12px;
+  font-family: inherit;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.edit-ok {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+}
+
+.edit-cancel:hover {
+  color: var(--text);
+  border-color: var(--text-3);
+}
+
+.edit-ok:hover {
+  opacity: 0.9;
+}

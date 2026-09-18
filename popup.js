@@ -96,7 +96,8 @@ function walkBookmarkFolder(node, path, groups) {
         name: b.title || shortUrl(b.url),
         url: b.url,
         platform: null,
-        accounts: []
+        accounts: [],
+        bmId: b.id
       }))
     });
   }
@@ -223,11 +224,18 @@ function render() {
     title.innerHTML = `${leadIcon}${escapeHtml(group)}<span class="group-count">${items.length}</span>`;
     sec.appendChild(title);
 
-    items.forEach(item => sec.appendChild(renderItem(item)));
+    items.forEach(item => {
+      const el = renderItem(item);
+      itemByEl.set(el, { item, group, isBookmark });
+      sec.appendChild(el);
+    });
     frag.appendChild(sec);
   });
   container.appendChild(frag);
 }
+
+// 卡片元素 → 数据条目 的映射（搜索过滤后的拷贝分组里 item 仍是原引用，靠它反查真实分组）
+const itemByEl = new WeakMap();
 
 function renderItem(item) {
   const el = document.createElement('div');
@@ -958,6 +966,188 @@ window.addEventListener('resize', () => {
   }, 400);
 });
 
+// ---------- 右键编辑 / 删除（含持久化） ----------
+
+const CUSTOM_GROUPS_KEY = 'superLinkCustomGroups';
+
+// 用户编辑后，内置分组整体存 chrome.storage.local，之后以此为准（data.js 仅初始模板）
+function saveCustomGroups() {
+  if (typeof chrome === 'undefined' || !chrome.storage || !chrome.storage.local) return;
+  chrome.storage.local.set({ [CUSTOM_GROUPS_KEY]: JSON.parse(JSON.stringify(LINK_GROUPS)) });
+}
+
+function loadCustomGroups(done) {
+  if (typeof chrome === 'undefined' || !chrome.storage || !chrome.storage.local) return done();
+  chrome.storage.local.get(CUSTOM_GROUPS_KEY, got => {
+    const stored = got[CUSTOM_GROUPS_KEY];
+    if (Array.isArray(stored) && stored.length) {
+      LINK_GROUPS.length = 0;
+      stored.forEach(g => LINK_GROUPS.push(g));
+    }
+    done();
+  });
+}
+
+// ---- 右键菜单 ----
+let ctxMenu = null;
+
+function closeCtxMenu() {
+  if (ctxMenu) { ctxMenu.remove(); ctxMenu = null; }
+}
+
+function openCtxMenu(x, y, target) {
+  closeCtxMenu();
+  ctxMenu = document.createElement('div');
+  ctxMenu.className = 'ctx-menu';
+
+  const editBtn = document.createElement('button');
+  editBtn.textContent = '编辑';
+  editBtn.addEventListener('click', () => { closeCtxMenu(); openEditDialog(target); });
+
+  // 两步确认：第一次点变为「确认删除？」，再次点才执行
+  const delBtn = document.createElement('button');
+  delBtn.className = 'ctx-del';
+  delBtn.textContent = '删除';
+  delBtn.addEventListener('click', () => {
+    if (delBtn.dataset.arm) {
+      closeCtxMenu();
+      deleteItem(target);
+    } else {
+      delBtn.dataset.arm = '1';
+      delBtn.textContent = '确认删除？';
+    }
+  });
+
+  // 菜单内部点击不冒泡：避免触发 document 上的关闭逻辑，两步确认才能生效
+  ctxMenu.addEventListener('click', e => e.stopPropagation());
+  ctxMenu.append(editBtn, delBtn);
+  document.body.appendChild(ctxMenu);
+  const r = ctxMenu.getBoundingClientRect();
+  ctxMenu.style.left = Math.min(x, window.innerWidth - r.width - 8) + 'px';
+  ctxMenu.style.top = Math.min(y, window.innerHeight - r.height - 8) + 'px';
+}
+
+document.addEventListener('click', closeCtxMenu);
+document.addEventListener('scroll', closeCtxMenu, true);
+window.addEventListener('blur', closeCtxMenu);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeCtxMenu(); closeEditDialog(); }
+});
+
+document.getElementById('groupsInner').addEventListener('contextmenu', e => {
+  const itemEl = e.target.closest('.item');
+  if (!itemEl) return;
+  e.preventDefault();
+  const bound = itemByEl.get(itemEl);
+  if (!bound) return;
+  const source = visibleGroups().find(g => g.items.includes(bound.item));
+  if (!source) return;
+  openCtxMenu(e.clientX, e.clientY, { group: source, item: bound.item });
+});
+
+// ---- 编辑对话框 ----
+let editMask = null;
+
+function closeEditDialog() {
+  if (editMask) { editMask.remove(); editMask = null; }
+}
+
+function openEditDialog({ item }) {
+  closeEditDialog();
+  editMask = document.createElement('div');
+  editMask.className = 'edit-mask';
+  const dlg = document.createElement('div');
+  dlg.className = 'edit-dialog';
+
+  const title = document.createElement('div');
+  title.className = 'edit-title';
+  title.textContent = '编辑链接';
+
+  const mkField = (labelText, value) => {
+    const label = document.createElement('label');
+    label.textContent = labelText;
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = value;
+    label.appendChild(input);
+    return { label, input };
+  };
+  const name = mkField('名称', item.name || '');
+  const url = mkField('链接', item.url || '');
+
+  const btns = document.createElement('div');
+  btns.className = 'edit-btns';
+  const cancel = document.createElement('button');
+  cancel.className = 'edit-cancel';
+  cancel.textContent = '取消';
+  const ok = document.createElement('button');
+  ok.className = 'edit-ok';
+  ok.textContent = '保存';
+  btns.append(cancel, ok);
+
+  dlg.append(title, name.label, url.label, btns);
+  editMask.appendChild(dlg);
+  editMask.addEventListener('click', e => { if (e.target === editMask) closeEditDialog(); });
+  cancel.addEventListener('click', closeEditDialog);
+  ok.addEventListener('click', () => {
+    const n = name.input.value.trim();
+    let u = url.input.value.trim();
+    if (!n || !u) { showToast('名称和链接不能为空'); return; }
+    if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(u)) u = 'https://' + u; // 缺协议时自动补全
+    applyItemEdit(item, n, u);
+    closeEditDialog();
+  });
+  dlg.addEventListener('keydown', e => {
+    if (e.key === 'Enter') ok.click();
+    if (e.key === 'Escape') closeEditDialog();
+  });
+  document.body.appendChild(editMask);
+  name.input.focus();
+}
+
+// ---- 编辑 / 删除执行 ----
+function applyItemEdit(item, name, url) {
+  // 浏览器书签条目：写回浏览器书签
+  if (item.bmId && typeof chrome !== 'undefined' && chrome.bookmarks && chrome.bookmarks.update) {
+    chrome.bookmarks.update(item.bmId, { title: name, url }, () => {
+      item.name = name;
+      item.url = url;
+      renderTabs();
+      render();
+      showToast('已保存（同步到浏览器书签）');
+    });
+    return;
+  }
+  item.name = name;
+  item.url = url;
+  saveCustomGroups();
+  renderTabs();
+  render();
+  showToast('已保存');
+}
+
+function deleteItem({ group, item }) {
+  if (item.bmId && typeof chrome !== 'undefined' && chrome.bookmarks && chrome.bookmarks.remove) {
+    chrome.bookmarks.remove(item.bmId, () => {
+      const i = group.items.indexOf(item);
+      if (i > -1) group.items.splice(i, 1);
+      renderTabs();
+      render();
+      showToast('已删除（同步到浏览器书签）');
+    });
+    return;
+  }
+  const i = group.items.indexOf(item);
+  if (i > -1) group.items.splice(i, 1);
+  // 内置分组删空后整组移除
+  const gi = LINK_GROUPS.indexOf(group);
+  if (gi > -1 && group.items.length === 0) LINK_GROUPS.splice(gi, 1);
+  saveCustomGroups();
+  renderTabs();
+  render();
+  showToast('已删除');
+}
+
 // ---------- 初始化 ----------
 
 initMode();
@@ -970,5 +1160,7 @@ initOpenMode();
 initTabsWidth();
 updateBackTopCenter();
 initTabsCollapse();
-renderTabs();
-render();
+loadCustomGroups(() => {
+  renderTabs();
+  render();
+});
