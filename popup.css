@@ -1192,7 +1192,7 @@ body.mode-sidepanel.cols-8 .item {
   display: flex;
   justify-content: flex-start;
   gap: 6px;
-  padding: 0 6px 4px;
+  padding: 0 0 8px;
 }
 
 /* 左右布局下随内容区滚动吸顶 */
@@ -1207,23 +1207,24 @@ body.mode-sidepanel.layout-h .groups-toolbar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border: 1px solid var(--border);
-  border-radius: 7px;
+  border-radius: 8px;
   background: var(--card-bg);
   color: var(--text-3);
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
 }
 
 .toolbar-btn:hover {
   border-color: var(--accent);
   color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.06);
 }
 
 .toolbar-btn:active {
-  transform: scale(0.95);
+  transform: scale(0.92);
 }
 
 /* ---------- 分类区域显示 / 隐藏 ---------- */
