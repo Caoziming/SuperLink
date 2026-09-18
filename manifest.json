@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "Super Link",
   "short_name": "SuperLink",
-  "version": "1.15.1",
-  "description": "功能强大的书签工具 · 一站式管理你的书签",
+  "version": "1.15.2",
+  "description": "功能强大的书签工具 · 一站式管理你的书签：右键编辑 / 删除 / 新增链接与分组，多列布局，深浅色模式",
   "permissions": ["bookmarks", "sidePanel", "contextMenus", "favicon", "storage"],
   "background": {
     "service_worker": "background.js"
