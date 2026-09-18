@@ -92,6 +92,7 @@ function walkBookmarkFolder(node, path, groups) {
       group: name,
       color: bookmarkColor(name),
       isBookmark: true,
+      bmFolderId: node.id,
       items: links.map(b => ({
         name: b.title || shortUrl(b.url),
         url: b.url,
@@ -224,6 +225,7 @@ function render() {
     title.innerHTML = `${leadIcon}${escapeHtml(group)}<span class="group-count">${items.length}</span>`;
     sec.appendChild(title);
 
+    titleByEl.set(title, { group, isBookmark, firstItem: items[0] });
     items.forEach(item => {
       const el = renderItem(item);
       itemByEl.set(el, { item, group, isBookmark });
@@ -234,8 +236,9 @@ function render() {
   container.appendChild(frag);
 }
 
-// 卡片元素 → 数据条目 的映射（搜索过滤后的拷贝分组里 item 仍是原引用，靠它反查真实分组）
+// 卡片元素 → 数据条目、标题元素 → 分组 的映射（搜索过滤后的拷贝分组里 item 仍是原引用，靠它反查真实分组）
 const itemByEl = new WeakMap();
+const titleByEl = new WeakMap();
 
 function renderItem(item) {
   const el = document.createElement('div');
@@ -1031,10 +1034,18 @@ document.addEventListener('click', closeCtxMenu);
 document.addEventListener('scroll', closeCtxMenu, true);
 window.addEventListener('blur', closeCtxMenu);
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeCtxMenu(); closeEditDialog(); }
+  if (e.key === 'Escape') { closeCtxMenu(); closeFormDialog(); }
 });
 
 document.getElementById('groupsInner').addEventListener('contextmenu', e => {
+  const titleEl = e.target.closest('.group-title');
+  if (titleEl) {
+    const bound = titleByEl.get(titleEl);
+    if (!bound) return;
+    e.preventDefault();
+    openGroupCtxMenu(e.clientX, e.clientY, { group: resolveSourceGroup(bound) });
+    return;
+  }
   const itemEl = e.target.closest('.item');
   if (!itemEl) return;
   e.preventDefault();
@@ -1045,35 +1056,36 @@ document.getElementById('groupsInner').addEventListener('contextmenu', e => {
   openCtxMenu(e.clientX, e.clientY, { group: source, item: bound.item });
 });
 
-// ---- 编辑对话框 ----
-let editMask = null;
+// ---- 通用表单对话框 ----
+let formMask = null;
 
-function closeEditDialog() {
-  if (editMask) { editMask.remove(); editMask = null; }
+function closeFormDialog() {
+  if (formMask) { formMask.remove(); formMask = null; }
 }
 
-function openEditDialog({ item }) {
-  closeEditDialog();
-  editMask = document.createElement('div');
-  editMask.className = 'edit-mask';
+// fields = [{ label, value }]，确定时把各输入值（trim 后）回调给 onOk
+function openFormDialog(titleText, fields, onOk) {
+  closeFormDialog();
+  formMask = document.createElement('div');
+  formMask.className = 'edit-mask';
   const dlg = document.createElement('div');
   dlg.className = 'edit-dialog';
 
   const title = document.createElement('div');
   title.className = 'edit-title';
-  title.textContent = '编辑链接';
+  title.textContent = titleText;
+  dlg.appendChild(title);
 
-  const mkField = (labelText, value) => {
+  const inputs = fields.map(f => {
     const label = document.createElement('label');
-    label.textContent = labelText;
+    label.textContent = f.label;
     const input = document.createElement('input');
     input.type = 'text';
-    input.value = value;
+    input.value = f.value || '';
     label.appendChild(input);
-    return { label, input };
-  };
-  const name = mkField('名称', item.name || '');
-  const url = mkField('链接', item.url || '');
+    dlg.appendChild(label);
+    return input;
+  });
 
   const btns = document.createElement('div');
   btns.className = 'edit-btns';
@@ -1084,25 +1096,117 @@ function openEditDialog({ item }) {
   ok.className = 'edit-ok';
   ok.textContent = '保存';
   btns.append(cancel, ok);
+  dlg.appendChild(btns);
 
-  dlg.append(title, name.label, url.label, btns);
-  editMask.appendChild(dlg);
-  editMask.addEventListener('click', e => { if (e.target === editMask) closeEditDialog(); });
-  cancel.addEventListener('click', closeEditDialog);
+  formMask.appendChild(dlg);
+  formMask.addEventListener('click', e => { if (e.target === formMask) closeFormDialog(); });
+  cancel.addEventListener('click', closeFormDialog);
   ok.addEventListener('click', () => {
-    const n = name.input.value.trim();
-    let u = url.input.value.trim();
-    if (!n || !u) { showToast('名称和链接不能为空'); return; }
-    if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(u)) u = 'https://' + u; // 缺协议时自动补全
-    applyItemEdit(item, n, u);
-    closeEditDialog();
+    const values = inputs.map(i => i.value.trim());
+    if (values.some(v => !v)) { showToast('内容不能为空'); return; }
+    closeFormDialog();
+    onOk(values);
   });
   dlg.addEventListener('keydown', e => {
     if (e.key === 'Enter') ok.click();
-    if (e.key === 'Escape') closeEditDialog();
+    if (e.key === 'Escape') closeFormDialog();
   });
-  document.body.appendChild(editMask);
-  name.input.focus();
+  document.body.appendChild(formMask);
+  inputs[0].focus();
+}
+
+function openEditDialog({ item }) {
+  openFormDialog('编辑链接', [
+    { label: '名称', value: item.name || '' },
+    { label: '链接', value: item.url || '' }
+  ], ([n, u]) => {
+    if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(u)) u = 'https://' + u; // 缺协议自动补全
+    applyItemEdit(item, n, u);
+  });
+}
+
+// ---- 分组右键菜单：重命名 / 新增链接 ----
+function openGroupCtxMenu(x, y, target) {
+  closeCtxMenu();
+  ctxMenu = document.createElement('div');
+  ctxMenu.className = 'ctx-menu';
+
+  const renameBtn = document.createElement('button');
+  renameBtn.textContent = '重命名分组';
+  renameBtn.addEventListener('click', () => {
+    closeCtxMenu();
+    const slash = target.group.group.lastIndexOf('/');
+    const ownName = slash > -1 ? target.group.group.slice(slash + 1) : target.group.group;
+    openFormDialog('重命名分组', [{ label: '分组名称', value: ownName }], ([n]) => {
+      applyGroupRename(target.group, n);
+    });
+  });
+
+  const addBtn = document.createElement('button');
+  addBtn.textContent = '新增链接';
+  addBtn.addEventListener('click', () => {
+    closeCtxMenu();
+    openFormDialog('新增链接', [
+      { label: '名称', value: '' },
+      { label: '链接', value: '' }
+    ], ([n, u]) => {
+      if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(u)) u = 'https://' + u;
+      applyAddLink(target.group, n, u);
+    });
+  });
+
+  ctxMenu.addEventListener('click', e => e.stopPropagation());
+  ctxMenu.append(renameBtn, addBtn);
+  document.body.appendChild(ctxMenu);
+  const r = ctxMenu.getBoundingClientRect();
+  ctxMenu.style.left = Math.min(x, window.innerWidth - r.width - 8) + 'px';
+  ctxMenu.style.top = Math.min(y, window.innerHeight - r.height - 8) + 'px';
+}
+
+// 搜索模式下标题绑定的分组是拷贝，用首条目反查原分组
+function resolveSourceGroup(bound) {
+  return (bound.firstItem && visibleGroups().find(g => g.items.includes(bound.firstItem))) || bound.group;
+}
+
+// ---- 分组操作执行 ----
+function applyGroupRename(group, newName) {
+  const oldName = group.group;
+  const finish = () => {
+    group.group = newName;
+    if (state.tab === oldName) state.tab = newName;
+    renderTabs();
+    render();
+  };
+  if (group.bmFolderId && typeof chrome !== 'undefined' && chrome.bookmarks && chrome.bookmarks.update) {
+    // 书签文件夹：重命名真实文件夹，展示名保留父路径前缀
+    chrome.bookmarks.update(group.bmFolderId, { title: newName }, () => {
+      const slash = oldName.lastIndexOf('/');
+      newName = slash > -1 ? oldName.slice(0, slash + 1) + newName : newName;
+      finish();
+      showToast('分组已重命名（同步到浏览器书签）');
+    });
+    return;
+  }
+  finish();
+  saveCustomGroups();
+  showToast('分组已重命名');
+}
+
+function applyAddLink(group, name, url) {
+  if (group.bmFolderId && typeof chrome !== 'undefined' && chrome.bookmarks && chrome.bookmarks.create) {
+    chrome.bookmarks.create({ parentId: group.bmFolderId, title: name, url }, node => {
+      group.items.push({ name, url, platform: null, accounts: [], bmId: node && node.id });
+      renderTabs();
+      render();
+      showToast('已新增（同步到浏览器书签）');
+    });
+    return;
+  }
+  group.items.push({ name, url, platform: null, accounts: [] });
+  saveCustomGroups();
+  renderTabs();
+  render();
+  showToast('已新增链接');
 }
 
 // ---- 编辑 / 删除执行 ----
