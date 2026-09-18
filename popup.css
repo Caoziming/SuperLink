@@ -387,6 +387,26 @@ body {
   color: var(--group-color, var(--accent));
 }
 
+/* 分组展开 / 收起：标题可点击，箭头随状态旋转 */
+.group-title {
+  cursor: pointer;
+  user-select: none;
+}
+
+.group-caret {
+  display: inline-flex;
+  color: var(--text-3);
+  transition: transform 0.15s;
+}
+
+.group.collapsed .group-caret {
+  transform: rotate(-90deg);
+}
+
+.group.collapsed .item {
+  display: none;
+}
+
 .group-count {
   font-weight: 400;
   font-size: 11px;
@@ -1151,4 +1171,18 @@ body.mode-sidepanel.cols-8 .item {
 
 .edit-ok:hover {
   opacity: 0.9;
+}
+
+/* ---------- 拖拽排序 ---------- */
+.item.dragging {
+  opacity: 0.45;
+}
+
+/* 插入位置指示线（上方 / 下方） */
+.item.drop-before {
+  box-shadow: 0 -2px 0 0 var(--accent);
+}
+
+.item.drop-after {
+  box-shadow: 0 2px 0 0 var(--accent);
 }

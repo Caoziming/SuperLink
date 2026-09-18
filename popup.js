@@ -186,6 +186,7 @@ function groupTypeIcon(name) {
 
 function render() {
   const container = document.getElementById('groupsInner');
+  const cmap = loadCollapseMap();
   const resultBar = document.getElementById('resultBar');
   container.innerHTML = '';
 
@@ -217,12 +218,16 @@ function render() {
     sec.className = 'group';
     sec.style.setProperty('--group-color', groupColor(group));
 
+    const collapsed = !!cmap[group];
+    sec.classList.toggle('collapsed', collapsed);
+
     const title = document.createElement('div');
     title.className = 'group-title';
     const leadIcon = state.showGroupIcons
       ? `<span class="g-ic">${isBookmark ? FOLDER_ICON : LINK_ICON}</span>`
       : '';
-    title.innerHTML = `${leadIcon}${escapeHtml(group)}<span class="group-count">${items.length}</span>`;
+    title.innerHTML = `${CARET_ICON}${leadIcon}${escapeHtml(group)}<span class="group-count">${items.length}</span>`;
+    title.addEventListener('click', () => toggleGroupCollapse(group));
     sec.appendChild(title);
 
     titleByEl.set(title, { group, isBookmark, firstItem: items[0] });
@@ -235,6 +240,28 @@ function render() {
   });
   container.appendChild(frag);
 }
+
+// ---------- 分组展开 / 收起（状态按分组名记忆） ----------
+const GROUP_COLLAPSED_KEY = 'superLinkGroupCollapsed';
+
+function loadCollapseMap() {
+  try { return JSON.parse(localStorage.getItem(GROUP_COLLAPSED_KEY)) || {}; } catch { return {}; }
+}
+
+function saveCollapseMap(map) {
+  try { localStorage.setItem(GROUP_COLLAPSED_KEY, JSON.stringify(map)); } catch { /* 忽略存储异常 */ }
+}
+
+function toggleGroupCollapse(groupName) {
+  const map = loadCollapseMap();
+  if (map[groupName]) delete map[groupName];
+  else map[groupName] = true;
+  saveCollapseMap(map);
+  render();
+}
+
+// 折叠箭头图标
+const CARET_ICON = '<svg class="group-caret" viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6 L8 10 L12 6"/></svg>';
 
 // 卡片元素 → 数据条目、标题元素 → 分组 的映射（搜索过滤后的拷贝分组里 item 仍是原引用，靠它反查真实分组）
 const itemByEl = new WeakMap();
@@ -354,6 +381,24 @@ function renderItem(item) {
     });
     el.appendChild(box);
   }
+
+  // 可拖拽排序（搜索过滤状态下禁用，避免拷贝分组错位）
+  el.draggable = true;
+  el.addEventListener('dragstart', e => {
+    if (state.keyword.trim()) { e.preventDefault(); return; }
+    const bound = itemByEl.get(el);
+    const source = visibleGroups().find(g => g.items.includes(bound.item));
+    if (!source) { e.preventDefault(); return; }
+    dragState = { el, item: bound.item, source };
+    e.dataTransfer.effectAllowed = 'move';
+    try { e.dataTransfer.setData('text/plain', ''); } catch { /* 兼容旧内核 */ }
+    el.classList.add('dragging');
+  });
+  el.addEventListener('dragend', () => {
+    el.classList.remove('dragging');
+    clearDropHints();
+    dragState = null;
+  });
 
   // 点击交互：
   // 微信H5 条目 → 复制链接（用于在微信环境打开）
@@ -968,6 +1013,90 @@ window.addEventListener('resize', () => {
     });
   }, 400);
 });
+
+// ---------- 拖拽排序（同组重排 / 跨组移动） ----------
+
+let dragState = null;   // { el, item, source }
+let dropTarget = null;  // { el, before }
+
+function clearDropHints() {
+  document.querySelectorAll('.item.drop-before, .item.drop-after').forEach(el => {
+    el.classList.remove('drop-before', 'drop-after');
+  });
+  dropTarget = null;
+}
+
+document.getElementById('groupsInner').addEventListener('dragover', e => {
+  if (!dragState) return;
+  const itemEl = e.target.closest('.item');
+  if (!itemEl || itemEl === dragState.el) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const r = itemEl.getBoundingClientRect();
+  const before = e.clientY < r.top + r.height / 2;
+  clearDropHints();
+  itemEl.classList.add(before ? 'drop-before' : 'drop-after');
+  dropTarget = { el: itemEl, before };
+});
+
+document.getElementById('groupsInner').addEventListener('drop', e => {
+  if (!dragState || !dropTarget) return;
+  e.preventDefault();
+  performDrop();
+});
+
+function performDrop() {
+  const { item, source } = dragState;
+  const bound = itemByEl.get(dropTarget.el);
+  const target = visibleGroups().find(g => g.items.includes(bound.item));
+  if (!target) return;
+
+  const targetIdx = target.items.indexOf(bound.item);
+  let insertIdx = dropTarget.before ? targetIdx : targetIdx + 1;
+  const srcIdx = source.items.indexOf(item);
+  const sameGroup = source === target;
+  if (sameGroup && srcIdx < insertIdx) insertIdx -= 1; // 先移除导致右侧位置左移
+  if (sameGroup && srcIdx === insertIdx) return;       // 位置未变
+
+  source.items.splice(srcIdx, 1);
+  target.items.splice(insertIdx, 0, item);
+
+  // 源分组删空（内置分组）则整组移除
+  const gi = LINK_GROUPS.indexOf(source);
+  if (gi > -1 && source.items.length === 0) LINK_GROUPS.splice(gi, 1);
+
+  // 浏览器书签条目：写回真实书签顺序 / 所属文件夹
+  if (item.bmId && typeof chrome !== 'undefined' && chrome.bookmarks && chrome.bookmarks.move && target.bmFolderId) {
+    moveBookmarkItem(item.bmId, target.bmFolderId, insertIdx, target, item);
+    return;
+  }
+  saveCustomGroups();
+  renderTabs();
+  render();
+}
+
+// 按链接在分组内的序号换算文件夹内真实索引后执行书签移动
+function moveBookmarkItem(bmId, folderId, indexAmongLinks, targetGroup, item) {
+  chrome.bookmarks.getChildren(folderId, children => {
+    const linkChildren = children.filter(c => c.url);
+    const clamped = Math.min(Math.max(indexAmongLinks, 0), linkChildren.length);
+    const anchor = linkChildren[clamped];
+    if (anchor) {
+      let idx = children.indexOf(anchor);
+      // 同文件夹且被拖项原在锚点之前：移除后锚点左移一位
+      const draggedIdx = children.findIndex(c => c.id === bmId);
+      if (draggedIdx > -1 && draggedIdx < idx) idx -= 1;
+      chrome.bookmarks.move(bmId, { parentId: folderId, index: idx }, done);
+    } else {
+      chrome.bookmarks.move(bmId, { parentId: folderId }, done);
+    }
+  });
+  function done() {
+    renderTabs();
+    render();
+    showToast('已移动（同步到浏览器书签）');
+  }
+}
 
 // ---------- 右键编辑 / 删除（含持久化） ----------
 
