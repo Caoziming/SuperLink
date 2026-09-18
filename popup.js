@@ -544,17 +544,7 @@ searchInput.addEventListener('input', () => {
   render();
 });
 
-// Escape 清空搜索
-searchInput.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    searchInput.value = '';
-    state.keyword = '';
-    clearBtn.hidden = true;
-    backToTopQuietly();
-    renderTabs();
-    render();
-  }
-});
+
 
 clearBtn.addEventListener('click', () => {
   searchInput.value = '';
@@ -1240,7 +1230,25 @@ document.addEventListener('click', closeCtxMenu);
 document.addEventListener('scroll', closeCtxMenu, true);
 window.addEventListener('blur', closeCtxMenu);
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeCtxMenu(); closeFormDialog(); }
+  if (e.key !== 'Escape') return;
+  // 逐层关闭：表单 → 右键菜单 → 主题/布局面板 → 清空搜索 → 关闭弹窗
+  if (formMask) { closeFormDialog(); return; }
+  if (ctxMenu) { closeCtxMenu(); return; }
+  let panelClosed = false;
+  if (!themePanel.hidden) { themePanel.hidden = true; panelClosed = true; }
+  if (colsPanel && !colsPanel.hidden) { colsPanel.hidden = true; panelClosed = true; }
+  if (panelClosed) return;
+  if (state.keyword) {
+    searchInput.value = '';
+    state.keyword = '';
+    clearBtn.hidden = true;
+    backToTopQuietly();
+    renderTabs();
+    render();
+    return;
+  }
+  // 弹窗模式下无任何打开层时，Esc 直接关闭扩展弹窗
+  if (!IS_SIDEPANEL) window.close();
 });
 
 document.getElementById('groupsInner').addEventListener('contextmenu', e => {
