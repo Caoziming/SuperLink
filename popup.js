@@ -593,7 +593,8 @@ function scrollToEnd(bottom) {
   const max = scroller === window
     ? document.documentElement.scrollHeight
     : scroller.scrollHeight;
-  scroller.scrollTo({ top: bottom ? max : 0, behavior: 'smooth' });
+  // 弹窗环境下 smooth 滚动不可靠且极慢，直接瞬时跳转保证功能
+  scroller.scrollTo({ top: bottom ? max : 0, behavior: 'auto' });
 }
 
 document.querySelector('.bt-top').addEventListener('click', () => scrollToEnd(false));
@@ -847,9 +848,11 @@ function applyLayout(layout) {
   updateBackTopCenter();
 }
 
-// 置顶按钮水平锚定内容区中心：布局切换 / 分隔线拖拽 / 窗口缩放后重算
+// 置顶按钮水平锚定内容区中心 + 头部高度（工具栏吸顶位置）：布局切换 / 缩放后重算
 function updateBackTopCenter() {
   const groups = document.getElementById('groups');
+  const header = document.querySelector('.header');
+  if (header) document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
   if (!groups) return;
   const r = groups.getBoundingClientRect();
   document.documentElement.style.setProperty('--bt-center', (r.left + r.width / 2) + 'px');

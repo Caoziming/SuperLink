@@ -1192,15 +1192,19 @@ body.mode-sidepanel.cols-8 .item {
   display: flex;
   justify-content: flex-start;
   gap: 6px;
-  padding: 0 0 8px;
+  padding: 8px 0 8px;
 }
 
-/* 左右布局下随内容区滚动吸顶 */
-body.mode-sidepanel.layout-h .groups-toolbar {
+/* 吸顶：常规模式贴在头部下方（--header-h 由 JS 写入），左右布局贴内容区顶 */
+.groups-toolbar {
   position: sticky;
-  top: 0;
+  top: var(--header-h, 0);
   z-index: 5;
   background: var(--bg);
+}
+
+body.mode-sidepanel.layout-h .groups-toolbar {
+  top: 0;
 }
 
 .toolbar-btn {
