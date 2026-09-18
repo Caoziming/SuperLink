@@ -1190,7 +1190,8 @@ body.mode-sidepanel.cols-8 .item {
 /* ---------- 内容区顶部工具栏（一键折叠/展开） ---------- */
 .groups-toolbar {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
+  gap: 6px;
   padding: 0 6px 4px;
 }
 
@@ -1224,4 +1225,16 @@ body.mode-sidepanel.layout-h .groups-toolbar {
 
 .toolbar-btn:active {
   transform: scale(0.95);
+}
+
+/* ---------- 分类区域显示 / 隐藏 ---------- */
+/* 上下布局：隐藏标签栏；左右布局：隐藏左列与分隔线（列宽归零） */
+body.tabs-hidden .tabs-bar,
+body.tabs-hidden .layout-divider,
+body.mode-sidepanel.layout-h.tabs-hidden .layout-divider {
+  display: none;
+}
+
+body.mode-sidepanel.layout-h.tabs-hidden {
+  grid-template-columns: 0 0 minmax(0, 1fr);
 }

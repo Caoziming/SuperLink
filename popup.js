@@ -280,6 +280,31 @@ function updateCollapseAllBtn() {
   btn.title = expanded ? '一键折叠全部分组' : '一键展开全部分组';
 }
 
+// ---------- 分类区域显示 / 隐藏 ----------
+const TABS_HIDDEN_KEY = 'superLinkTabsHidden';
+const PANEL_ICON = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>';
+const tabsVisBtn = document.getElementById('tabsVisBtn');
+tabsVisBtn.innerHTML = PANEL_ICON;
+
+function applyTabsHidden(hidden, save = true) {
+  document.body.classList.toggle('tabs-hidden', hidden);
+  tabsVisBtn.title = hidden ? '显示分类区域' : '隐藏分类区域';
+  if (save) {
+    try { localStorage.setItem(TABS_HIDDEN_KEY, hidden ? '1' : '0'); } catch { /* 忽略存储异常 */ }
+  }
+  updateBackTopCenter();
+}
+
+tabsVisBtn.addEventListener('click', () => {
+  applyTabsHidden(!document.body.classList.contains('tabs-hidden'));
+});
+
+function initTabsHidden() {
+  let hidden = false;
+  try { hidden = localStorage.getItem(TABS_HIDDEN_KEY) === '1'; } catch { /* 忽略存储异常 */ }
+  applyTabsHidden(hidden, false);
+}
+
 document.getElementById('collapseAllBtn').addEventListener('click', () => {
   const collapse = anyGroupExpanded();
   const map = loadCollapseMap();
@@ -1423,6 +1448,7 @@ initCols();
 initLayout();
 initOpenMode();
 initTabsWidth();
+initTabsHidden();
 updateBackTopCenter();
 initTabsCollapse();
 loadCustomGroups(() => {
