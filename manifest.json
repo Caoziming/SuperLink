@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Super Link",
   "short_name": "SuperLink",
-  "version": "1.15.0",
+  "version": "1.15.1",
   "description": "功能强大的书签工具 · 一站式管理你的书签",
   "permissions": ["bookmarks", "sidePanel", "contextMenus", "favicon", "storage"],
   "background": {

@@ -169,22 +169,23 @@
     <a href="#account">账号密码复制</a>
     <a href="#badge">平台徽章</a>
     <a href="#bookmark">浏览器书签</a>
-    <a href="#theme">主题色</a>
-    <a href="#backtop">置顶</a>
-    <a href="#sidepanel">侧边栏模式</a>
+    <a href="#theme">主题色与显示模式</a>
+    <a href="#layout">布局设置</a>
+    <a href="#backtop">置顶与置底</a>
+    <a href="#sidepanel">启动模式</a>
   </nav>
 
   <section class="card" id="tab">
     <h2><span class="num">1</span>标签导航</h2>
-    <p>顶部标签按项目边界划分，点击任一标签，列表只显示该标签下的链接；点击<strong>「全部」</strong>恢复展示全部链接。</p>
-    <p>标签上的数字表示该标签下的链接数量。</p>
+    <p>顶部标签按分组划分，点击任一标签，列表只显示该分组下的链接；点击<strong>「全部」</strong>恢复展示全部链接。标签上的数字表示链接数量。</p>
+    <p>开启<strong>分组图标</strong>（头部标签形开关按钮）后，标签与分组标题显示类型图标——<strong>「全部」</strong>带书签图标、<strong>浏览器书签分组</strong>带 📁 文件夹图标、<strong>内置分组</strong>带 🔗 链环图标；关闭后恢复彩色圆点。</p>
   </section>
 
   <section class="card" id="collapse">
     <h2><span class="num">2</span>标签折叠</h2>
     <p>标签较多换行时，标签栏右侧会出现<strong>「展开 / 收起」</strong>按钮：</p>
-    <p>· <strong>折叠</strong>：标签栏只显示一行，放不下的标签暂时隐藏</p>
-    <p>· <strong>展开</strong>：标签栏显示全部行数</p>
+    <p>· <strong>收起</strong>：标签栏平滑收到一行，按钮上显示被隐藏的标签数（如「展开 +3」）</p>
+    <p>· <strong>展开</strong>：平滑展开全部行数</p>
     <p>折叠 / 展开状态会自动记忆，下次打开扩展保持上次的状态。</p>
     <p class="tip">标签总数只有一行时，不会显示该按钮。</p>
   </section>
@@ -194,6 +195,7 @@
     <p>在搜索框输入关键字，按<strong>名称 / URL / 备注 / 分组名 / 账号密码</strong>模糊筛选，不区分大小写。</p>
     <p>多个关键字用空格分隔，表示「同时满足」（AND 查询）。例如输入 <kbd>git 仓库</kbd>，查找名称或 URL 同时含「git」和「仓库」的链接。</p>
     <p>按 <kbd>Esc</kbd> 或点击输入框右侧的 <kbd>×</kbd> 快速清空搜索，恢复标签浏览。</p>
+    <p class="tip">搜索时标签栏会同步只显示有匹配链接的分组。</p>
   </section>
 
   <section class="card" id="open">
@@ -203,6 +205,7 @@
     <p><strong>微信 H5 条目</strong>（卡片左侧有绿色竖条标识）：点击卡片同样只复制链接（与复制按钮效果一致），把链接粘贴到微信环境里打开即可。</p>
     <p><strong>右键卡片</strong>可<strong>编辑</strong>链接名称 / 网址，或<strong>删除</strong>（删除需二次确认）；编辑后自动保存，浏览器书签条目的改动会同步写回浏览器书签。</p>
     <p><strong>右键分组标题</strong>可<strong>重命名分组</strong>，或在该分组下<strong>新增链接</strong>；浏览器书签文件夹的重命名 / 新增会直接写回浏览器书签。</p>
+    <p>链接名称最多显示 20 字，超出以省略号（…）截断；悬停名称可查看完整内容。名称前的小图标为该站点的 favicon（读取浏览器缓存，无外部请求）。</p>
   </section>
 
   <section class="card" id="account">
@@ -224,7 +227,7 @@
     <p>点击头部<strong> 🔖 书签开关</strong>，可以把浏览器的书签加进列表：</p>
     <p>· 每个书签<strong>文件夹</strong>作为一个标签，追加在内置标签之后；文件夹里的<strong>书签</strong>就是该标签下的条目</p>
     <p>· 嵌套文件夹以「父文件夹/子文件夹」路径命名（如 <kbd>工作/后台</kbd>），空文件夹自动忽略</p>
-    <p>· 书签分组标题带 🔖 图标，与内置分组区分；点击书签条目直接在新标签页打开</p>
+    <p>· 书签分组标题带 📁 文件夹图标，与内置分组区分；点击书签条目直接在新标签页打开</p>
     <p class="tip">开关状态会自动记忆；再次点击开关即可隐藏书签分组。</p>
     <p><strong>书签导入 / 导出（浏览器操作）</strong>：书签数据保存在浏览器中，可随时备份或迁移到其他电脑：</p>
     <p>· <strong>Chrome 导出</strong>：打开书签管理器（地址栏输入 <kbd>chrome://bookmarks/</kbd>，或按 <kbd>Ctrl + Shift + O</kbd>）→ 右上角 <kbd>⋮</kbd> 菜单 → <strong>导出书签</strong>，浏览器会下载一个包含全部书签与文件夹结构的 HTML 备份文件</p>
@@ -234,21 +237,30 @@
   </section>
 
   <section class="card" id="theme">
-    <h2><span class="num">8</span>主题色</h2>
-    <p>点击头部<strong>调色板按钮</strong>，在弹出面板中选择：</p>
-    <p>· 8 种预置色块任选，或用「自定义」取色器选任意颜色（拖动实时预览）</p>
-    <p>· 点「恢复默认」回到静谧蓝</p>
-    <p class="tip">主题色会应用到链接文字、标签、搜索框光晕、卡片悬停阴影等处，并自动记忆；点击面板外任意位置关闭面板。</p>
+    <h2><span class="num">8</span>主题色与显示模式</h2>
+    <p>点击头部<strong>调色板按钮</strong>，面板内可设置：</p>
+    <p>· <strong>主题色</strong>：8 种预置色块任选，或用「自定义」取色器选任意颜色（拖动实时预览），点「恢复默认」回到静谧蓝</p>
+    <p>· <strong>显示模式</strong>：<strong>跟随系统</strong>（默认，系统切换深浅色时实时跟随）/ <strong>白天</strong> / <strong>夜晚</strong> 三选一</p>
+    <p class="tip">主题色会应用到链接文字、标签、搜索框光晕、卡片悬停阴影等处；两项设置均自动记忆，点击面板外任意位置关闭面板。</p>
+  </section>
+
+  <section class="card" id="layout">
+    <h2><span class="num">9</span>布局设置（侧边栏 / 独立窗口）</h2>
+    <p>点击头部<strong>布局按钮</strong>（三栏网格图标），面板内可设置：</p>
+    <p>· <strong>分类布局</strong>：<strong>上下</strong>（标签栏在内容上方，默认）或 <strong>左右</strong>（分类列在左、内容在右，两区各自独立滚动）</p>
+    <p>· <strong>列表列数</strong>：单列至最多 8 列；多列时每列内部与单列一样行行紧贴，分组标题独占整行</p>
+    <p>左右布局下可<strong>拖拽中间分隔线</strong>调整分类区宽度（最小 110px），双击分隔线恢复默认宽度。</p>
+    <p class="tip">全部布局设置自动记忆；弹窗模式为固定单列布局。</p>
   </section>
 
   <section class="card" id="backtop">
-    <h2><span class="num">9</span>置顶</h2>
-    <p>列表下滑一段距离后，底部会出现彩色渐变的<strong>「置顶」</strong>按钮，点击后平滑回到列表顶部。</p>
-    <p class="tip">本帮助页由头部 <strong>❓ 按钮</strong>打开；头部 <strong>🕘 时钟按钮</strong>可在新标签页打开浏览器历史记录；链接数据的增删改在扩展目录的 data.js 中维护。</p>
+    <h2><span class="num">10</span>置顶与置底</h2>
+    <p>列表下滑一段距离后，底部出现彩色渐变胶囊，左右两半：<strong>「置顶」</strong>平滑回到列表顶部，<strong>「置底」</strong>平滑到达列表底部；左右布局下胶囊居中于内容区底部。</p>
+    <p class="tip">本帮助页由头部 <strong>❓ 按钮</strong>打开；头部 <strong>🕘 时钟按钮</strong>可在新标签页打开浏览器历史记录。链接的增删改通过<strong>右键菜单</strong>完成并自动保存，<code>data.js</code> 仅作为初始数据模板。</p>
   </section>
 
   <section class="card" id="sidepanel">
-    <h2><span class="num">10</span>启动模式（侧边栏 / 弹窗）</h2>
+    <h2><span class="num">11</span>启动模式（侧边栏 / 弹窗 / 独立窗口）</h2>
     <p>点击头部<strong>调色板按钮</strong>，在面板的<strong>「启动模式」</strong>里选择点击工具栏图标时的打开方式：</p>
     <p>· <strong>侧边栏</strong>（默认）：点击工具栏图标直接以侧边栏常驻打开</p>
     <p>· <strong>弹窗</strong>：点击工具栏图标打开弹窗</p>
