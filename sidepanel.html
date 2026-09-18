@@ -143,7 +143,12 @@
   </div>
   <div class="layout-divider" id="layoutDivider" title="拖拽调整分类区宽度（双击重置）"></div>
   <div class="result-bar" id="resultBar" hidden></div>
-  <main id="groups" class="groups"><div class="groups-inner" id="groupsInner"></div></main>
+    <main id="groups" class="groups">
+    <div class="groups-toolbar">
+      <button id="collapseAllBtn" class="toolbar-btn" hidden title="一键折叠全部分组"></button>
+    </div>
+    <div class="groups-inner" id="groupsInner"></div>
+  </main>
   <div id="backTop" class="back-top">
     <button class="bt-half bt-top" title="回到顶部">
       <svg viewBox="0 0 16 16" width="12" height="12">

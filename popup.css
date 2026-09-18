@@ -1186,3 +1186,42 @@ body.mode-sidepanel.cols-8 .item {
 .item.drop-after {
   box-shadow: 0 2px 0 0 var(--accent);
 }
+
+/* ---------- 内容区顶部工具栏（一键折叠/展开） ---------- */
+.groups-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 6px 4px;
+}
+
+/* 左右布局下随内容区滚动吸顶 */
+body.mode-sidepanel.layout-h .groups-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg);
+  padding-top: 4px;
+}
+
+.toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--card-bg);
+  color: var(--text-3);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.toolbar-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.toolbar-btn:active {
+  transform: scale(0.95);
+}

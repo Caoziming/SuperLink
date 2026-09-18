@@ -239,6 +239,7 @@ function render() {
     frag.appendChild(sec);
   });
   container.appendChild(frag);
+  updateCollapseAllBtn();
 }
 
 // ---------- 分组展开 / 收起（状态按分组名记忆） ----------
@@ -259,6 +260,37 @@ function toggleGroupCollapse(groupName) {
   saveCollapseMap(map);
   render();
 }
+
+// 一键折叠 / 一键展开（按钮图标随状态切换：有展开的分组 → 显示折叠动作）
+const CHEVRONS_UP = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 11 12 6 7 11"/><polyline points="17 18 12 13 7 18"/></svg>';
+const CHEVRONS_DOWN = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 13 12 18 17 13"/><polyline points="7 6 12 11 17 6"/></svg>';
+
+function anyGroupExpanded() {
+  const map = loadCollapseMap();
+  return visibleGroups().some(g => g.items.length > 0 && !map[g.group]);
+}
+
+function updateCollapseAllBtn() {
+  const btn = document.getElementById('collapseAllBtn');
+  if (!btn) return;
+  const hasGroups = visibleGroups().some(g => g.items.length > 0);
+  btn.hidden = !hasGroups;
+  const expanded = anyGroupExpanded();
+  btn.innerHTML = expanded ? CHEVRONS_UP : CHEVRONS_DOWN;
+  btn.title = expanded ? '一键折叠全部分组' : '一键展开全部分组';
+}
+
+document.getElementById('collapseAllBtn').addEventListener('click', () => {
+  const collapse = anyGroupExpanded();
+  const map = loadCollapseMap();
+  visibleGroups().forEach(g => {
+    if (g.items.length === 0) return;
+    if (collapse) map[g.group] = true;
+    else delete map[g.group];
+  });
+  saveCollapseMap(map);
+  render();
+});
 
 // 折叠箭头图标
 const CARET_ICON = '<svg class="group-caret" viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6 L8 10 L12 6"/></svg>';
