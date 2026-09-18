@@ -588,13 +588,30 @@ window.addEventListener('scroll', () => updateBackTop(window), { passive: true }
 document.getElementById('groups').addEventListener('scroll', e => updateBackTop(e.target), { passive: true });
 
 // 一键平滑回到顶部 / 底部（左半置顶、右半置底）
+// 自绘平滑滚动：浏览器原生 smooth 在弹窗环境极慢，用 rAF 缓动替代（时长随距离自适应 180–500ms）
+let scrollAnimId = null;
+
 function scrollToEnd(bottom) {
   const scroller = scrollTarget();
   const max = scroller === window
     ? document.documentElement.scrollHeight
     : scroller.scrollHeight;
-  // 弹窗环境下 smooth 滚动不可靠且极慢，直接瞬时跳转保证功能
-  scroller.scrollTo({ top: bottom ? max : 0, behavior: 'auto' });
+  const startY = scroller === window ? window.scrollY : scroller.scrollTop;
+  const endY = bottom ? max : 0;
+  const dist = endY - startY;
+  if (Math.abs(dist) < 2) return;
+
+  const duration = Math.min(500, Math.max(180, Math.abs(dist) * 0.35));
+  const t0 = performance.now();
+  cancelAnimationFrame(scrollAnimId);
+  const step = now => {
+    const p = Math.min((now - t0) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3); // easeOutCubic：先快后缓
+    scroller.scrollTo({ top: startY + dist * eased, behavior: 'auto' });
+    if (p < 1) scrollAnimId = requestAnimationFrame(step);
+    else scrollAnimId = null;
+  };
+  scrollAnimId = requestAnimationFrame(step);
 }
 
 document.querySelector('.bt-top').addEventListener('click', () => scrollToEnd(false));
