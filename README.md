@@ -4,6 +4,12 @@
 
 基于 Chromium 的 Manifest V3 标准开发，可在 **Chrome、Edge** 及其他常见 Chromium 内核浏览器（Brave、Opera、360 极速浏览器、QQ 浏览器等）中直接安装使用，无需任何代码改动。
 
+<p align="center">
+  <img src="docs/preview-dark.png" alt="Super Link 界面预览（夜晚模式）" width="420">
+</p>
+
+> 📖 **English Documentation**: [README_EN.md](README_EN.md)
+
 ***
 
 ## 1. 功能特性
@@ -48,10 +54,15 @@ SuperLink/
 ├── data.js          # ★ 链接数据（分类 + 颜色 + 链接，全在这里维护）
 ├── help.html        # 帮助说明页（功能使用说明，新标签页打开）
 ├── sidepanel.html   # 侧边栏模式页面（与 popup.html 同构，共用 popup.js/css）
-└── icons/           # 扩展图标（16 / 48 / 128）
-    ├── icon16.png
-    ├── icon48.png
-    └── icon128.png
+├── docs/            # 界面预览截图
+│   └── preview-dark.png
+├── icons/           # 扩展图标（16 / 48 / 128）
+│   ├── icon16.png
+│   ├── icon48.png
+│   └── icon128.png
+├── LICENSE          # 开源许可协议（非商用）
+├── README.md        # 中文说明
+└── README_EN.md     # English documentation
 ```
 
 ***
@@ -230,9 +241,25 @@ const LINK_GROUPS = [
 
 ***
 
-## 7. 版本迭代记录
+## 7. 开源说明与许可
+
+> 本项目**仅供学习交流使用，请勿用于任何商业用途**。完整条款见根目录 [LICENSE](LICENSE)。
+
+- 本项目由个人内部工具重构而来，开源目的为**学习交流与技术分享**
+- 允许自由使用、修改、二次分发，但须**完整保留本许可声明与署名**，且**不得用于任何商业用途**（包括但不限于有偿销售或分发、集成到商业产品或服务、盈利性培训、商业推广等）
+- 项目内**不含任何公司信息、内网地址与账号数据**；如发现可疑内容请通过 GitHub Issue 反馈
+- 所有数据（链接、编辑记录、偏好设置）仅保存在浏览器本地（localStorage / `chrome.storage`），**不上传任何服务器**，请放心使用
+- 若参考或借鉴本项目代码，请在你的项目中注明出处，并同样遵循非商用限制
+
+***
+
+## 8. 版本迭代记录
 
 > 每次迭代发布后在此追加一条记录（新版本在最上面），括号内为对应提交号。
+
+### v1.17.3（2026-09-18）
+
+- **文档完善**：README 增加界面预览截图、开源说明与许可章节（仅供学习交流、禁止商用，详见 LICENSE）、英文版文档 `README_EN.md`；新增 LICENSE 许可协议文件
 
 ### v1.17.2（2026-09-18）
 

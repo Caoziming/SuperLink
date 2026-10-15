@@ -1,0 +1,52 @@
+Super Link — 自定义非商用许可协议 / Custom Non-Commercial License
+================================================================
+
+版权所有 (c) 2026 Caoziming（GitHub: https://github.com/Caoziming）
+Copyright (c) 2026 Caoziming
+
+一、授权范围 / Grant of License
+--------------------------------
+1. 【中文】任何人可以免费获取、使用、复制、修改本项目源码，但仅限于个人学习、
+   研究与技术交流目的。
+   [EN] Any person may freely obtain, use, copy and modify the source code of
+   this project, but ONLY for personal learning, research and technical
+   communication purposes.
+
+2. 【中文】禁止商用 / [EN] NO COMMERCIAL USE
+   未经版权所有者事先书面许可，任何人不得将本项目或其衍生作品用于任何直接或
+   间接的商业用途，包括但不限于：有偿销售或分发、集成到商业产品或服务、
+   盈利性培训课程、商业宣传或其他营利活动。
+   Without the prior written permission of the copyright holder, no one may
+   use this project or any derivative of it for any direct or indirect
+   commercial purpose, including but not limited to: paid sales or
+   distribution, integration into commercial products or services,
+   profit-oriented training, commercial promotion, or any other
+   profit-making activities.
+
+3. 【中文】保留声明 / [EN] Notice Retention
+   以任何形式分发本项目或基于其修改的作品时，必须完整保留本许可协议与
+   原始版权署名。
+   When redistributing this project or any work based on it, this license
+   and the original copyright notice must be retained in full.
+
+二、数据与隐私 / Data & Privacy
+--------------------------------
+本项目为纯浏览器扩展：所有数据（链接、编辑记录、偏好设置）仅存储在用户
+浏览器本地，作者不收集、不上传任何用户数据。
+This is a pure browser extension: all data (links, edits, preferences) is
+stored locally in the user's browser. The author collects and uploads
+nothing.
+
+三、免责声明 / Disclaimer
+--------------------------------
+本项目按“现状”提供，不附带任何明示或默示的担保。在任何情况下，作者均不对
+因使用或滥用本项目而产生的任何直接或间接损失承担责任。
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY ARISING FROM THE USE OF THIS SOFTWARE.
+
+四、违反后果 / Violation
+--------------------------------
+违反上述“禁止商用”条款的，版权所有者保留追究相关法律责任的权利。
+The copyright holder reserves the right to pursue legal liability for any
+violation of the NO COMMERCIAL USE clause above.
